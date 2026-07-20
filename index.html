@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScryVeil — diagnostic de securitate pentru orice site</title>
+<style>
+  :root {
+    --paper: #EEF1EC;
+    --paper-grid: #DCE3D9;
+    --panel: #FFFFFF;
+    --ink: #16241F;
+    --ink-soft: #55665C;
+    --chart: #0E6B5A;
+    --chart-dim: #BFE0D5;
+    --pulse: #FF6B4A;
+    --ok: #2F7A5A;
+    --ok-bg: #E3F1E9;
+    --warn: #B4780F;
+    --warn-bg: #FBF0DA;
+    --issue: #A6303E;
+    --issue-bg: #FAE4E6;
+    --blocked: #63666D;
+    --blocked-bg: #E9EAEC;
+    --font-display: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Times New Roman', serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --radius: 4px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    background-image:
+      linear-gradient(var(--paper-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+    background-size: 28px 28px;
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px 64px; }
+
+  header.masthead { padding: 12px 0 20px; border-bottom: 2px solid var(--ink); margin-bottom: 8px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--chart); }
+  h1.brand { font-family: var(--font-display); font-size: clamp(28px, 5vw, 44px); margin: 4px 0 6px; font-weight: 700; }
+  .tagline { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); margin: 0 0 20px; max-width: 60ch; }
+
+  .scan-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: stretch; }
+  .scan-form input[type="text"] {
+    flex: 1 1 280px;
+    padding: 12px 14px;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    background: var(--panel);
+    color: var(--ink);
+  }
+  .scan-form input[type="text"]:focus-visible { outline: 3px solid var(--pulse); outline-offset: 1px; }
+  .scan-form button {
+    padding: 12px 22px;
+    border: 2px solid var(--ink);
+    background: var(--chart);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: .03em;
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .scan-form button:hover { background: var(--ink); }
+  .scan-form button:focus-visible { outline: 3px solid var(--pulse); outline-offset: 2px; }
+  .form-error { width: 100%; color: var(--issue); font-family: var(--font-mono); font-size: 13px; min-height: 18px; }
+
+  .vitals { margin: 22px 0 10px; border: 2px solid var(--ink); background: var(--panel); border-radius: var(--radius); padding: 10px 14px 14px; }
+  .vitals canvas { width: 100%; height: 90px; display: block; }
+  .vitals__summary { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); margin-top: 6px; }
+
+  .arch-note { font-size: 12.5px; color: var(--ink-soft); border-left: 3px solid var(--chart); padding: 8px 12px; margin: 18px 0 0; background: var(--panel); border-radius: 0 var(--radius) var(--radius) 0; }
+
+  .panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 22px; }
+  .panel { border: 2px solid var(--ink); background: var(--panel); border-radius: var(--radius); padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .panel__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .panel__title { font-family: var(--font-display); font-size: 18px; margin: 0; }
+  .panel__badge { font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; border: 1.5px solid var(--ink-soft); color: var(--ink-soft); background: transparent; white-space: nowrap; }
+  .panel[data-status="ok"] .panel__badge { color: var(--ok); border-color: var(--ok); background: var(--ok-bg); }
+  .panel[data-status="warn"] .panel__badge { color: var(--warn); border-color: var(--warn); background: var(--warn-bg); }
+  .panel[data-status="issue"] .panel__badge { color: var(--issue); border-color: var(--issue); background: var(--issue-bg); }
+  .panel[data-status="blocked"] .panel__badge { color: var(--blocked); border-color: var(--blocked); background: var(--blocked-bg); }
+  .panel[data-status="loading"] .panel__badge { color: var(--chart); border-color: var(--chart); background: var(--chart-dim); }
+  .panel[data-status="ok"] { border-color: var(--ok); }
+  .panel[data-status="warn"] { border-color: var(--warn); }
+  .panel[data-status="issue"] { border-color: var(--issue); }
+  .panel[data-status="blocked"] { border-color: var(--blocked); }
+
+  .visually-hidden { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .panel__body { font-size: 14px; }
+  .panel__hint { margin: 0; color: var(--ink-soft); }
+  .panel__hint a { color: var(--chart); }
+  .panel__note { margin: 6px 0 0; font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); }
+
+  .panel__table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 12.5px; }
+  .panel__table tr { border-bottom: 1px solid var(--paper-grid); }
+  .panel__table td { padding: 5px 4px; vertical-align: top; word-break: break-all; }
+  .panel__table td:first-child { color: var(--ink-soft); width: 64px; font-weight: 600; }
+
+  .panel__deflist { display: grid; grid-template-columns: max-content 1fr; gap: 5px 12px; margin: 0; font-size: 13px; }
+  .panel__deflist dt { color: var(--ink-soft); font-family: var(--font-mono); font-size: 12px; }
+  .panel__deflist dd { margin: 0; word-break: break-word; }
+
+  .reputation-key { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+  .reputation-key input { flex: 1 1 180px; padding: 7px 9px; border: 1.5px solid var(--ink-soft); border-radius: var(--radius); font-family: var(--font-mono); font-size: 12.5px; }
+  .reputation-key input:focus-visible { outline: 2px solid var(--pulse); }
+  .reputation-key-hint { font-size: 11.5px; color: var(--ink-soft); margin: 0 0 8px; }
+
+  footer.referrals { margin-top: 40px; border-top: 2px solid var(--ink); padding-top: 20px; }
+  footer.referrals h2 { font-family: var(--font-display); font-size: 20px; margin: 0 0 4px; }
+  footer.referrals p.lead { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); margin: 0 0 16px; }
+  .referral-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .referral-grid a { display: block; padding: 12px 14px; border: 1.5px solid var(--ink); border-radius: var(--radius); text-decoration: none; color: var(--ink); background: var(--panel); transition: background .12s ease, color .12s ease; }
+  .referral-grid a:hover { background: var(--ink); color: var(--paper); }
+  .referral-grid a:focus-visible { outline: 3px solid var(--pulse); outline-offset: 2px; }
+  .referral-grid strong { display: block; font-family: var(--font-mono); font-size: 13px; margin-bottom: 2px; }
+  .referral-grid span { font-size: 11.5px; color: var(--ink-soft); }
+  .referral-grid a:hover span { color: var(--chart-dim); }
+
+  .foot-note { font-size: 11.5px; color: var(--ink-soft); margin-top: 22px; }
+
+  @media (max-width: 560px) {
+    .scan-form { flex-direction: column; }
+    .panels { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<noscript><p style="max-width:60ch;margin:32px auto;font-family:sans-serif;">ScryVeil are nevoie de JavaScript ca să ruleze verificările. Activează JavaScript și reîncarcă pagina.</p></noscript>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="eyebrow">diagnostic de site // v1.0 // rulează local, fără server</div>
+    <h1 class="brand">ScryVeil</h1>
+    <p class="tagline">ridică vălul tehnic din jurul oricărui domeniu — ce se vede direct din browser, și ce trimitem mai departe la unealta potrivită</p>
+    <form id="scanForm" class="scan-form">
+      <label for="domainInput" class="visually-hidden">Domeniu de verificat</label>
+      <input type="text" id="domainInput" placeholder="exemplu.ro" autocomplete="off" spellcheck="false" inputmode="url">
+      <button type="submit">Scanează</button>
+      <div class="form-error" id="formError" role="alert"></div>
+    </form>
+  </header>
+
+  <div class="vitals">
+    <canvas id="vitalsCanvas" role="img" aria-label="indicator animat al stării scanării"></canvas>
+    <div class="vitals__summary" id="vitalsSummary" aria-live="polite">Introdu un domeniu pentru a începe.</div>
+  </div>
+
+  <p class="arch-note">DNS-ul, certificatul (transparency log) și IP-ul se verifică direct din acest fișier. Headerele altui domeniu sau o bază de reputație la nivel de server nu pot fi citite dintr-o pagină statică — panourile marcate „blocat” explică motivul tehnic și trimit spre unealta care chiar poate face verificarea aceea.</p>
+
+  <main class="panels" id="panels">
+    <section class="panel" data-panel="dns" data-status="idle">
+      <div class="panel__head"><h2 class="panel__title">DNS &amp; domeniu</h2><span class="panel__badge">—</span></div>
+      <div class="panel__body"><p class="panel__hint">Înregistrări A, AAAA, MX, TXT, NS, CNAME, SOA, CAA + semnal DNSSEC.</p></div>
+    </section>
+
+    <section class="panel" data-panel="rdap" data-status="idle">
+      <div class="panel__head"><h2 class="panel__title">Înregistrare (RDAP)</h2><span class="panel__badge">—</span></div>
+      <div class="panel__body"><p class="panel__hint">Registrar, dată înregistrare/expirare, nameservers.</p></div>
+    </section>
+
+    <section class="panel" data-panel="cert" data-status="idle">
+      <div class="panel__head"><h2 class="panel__title">SSL &amp; certificat</h2><span class="panel__badge">—</span></div>
+      <div class="panel__body"><p class="panel__hint">Răspuns HTTPS + Certificate Transparency (crt.sh).</p></div>
+    </section>
+
+    <section class="panel" data-panel="headers" data-status="idle">
+      <div class="panel__head"><h2 class="panel__title">Headere de securitate</h2><span class="panel__badge">—</span></div>
+      <div class="panel__body"><p class="panel__hint">CSP, HSTS, X-Frame-Options ș.a. — doar dacă domeniul permite citirea din alt origin.</p></div>
+    </section>
+
+    <section class="panel" data-panel="ip" data-status="idle">
+      <div class="panel__head"><h2 class="panel__title">IP &amp; găzduire</h2><span class="panel__badge">—</span></div>
+      <div class="panel__body"><p class="panel__hint">Adresă IP, organizație/ASN, locație aproximativă.</p></div>
+    </section>
+
+    <section class="panel" data-panel="reputation" data-status="idle">
+      <div class="panel__head"><h2 class="panel__title">Reputație &amp; blacklist</h2><span class="panel__badge">—</span></div>
+      <div class="panel__body">
+        <div class="reputation-key">
+          <label for="gsbKey" class="visually-hidden">Cheie API Google Safe Browsing (opțional)</label>
+          <input type="text" id="gsbKey" placeholder="cheie API Google Safe Browsing (opțional)" autocomplete="off">
+        </div>
+        <p class="reputation-key-hint">Cheia stă doar în memoria acestei file — nu e salvată nicăieri. Fără ea, primești direct linkurile din josul paginii.</p>
+        <div class="panel__results" id="reputationResults"><p class="panel__hint">Apasă „Scanează” pentru rezultat.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="referrals">
+    <h2>Trimiteri externe</h2>
+    <p class="lead">pentru tot ce nu poate rula dintr-un fișier static — se deschid în filă nouă, cu domeniul completat automat</p>
+    <div class="referral-grid" id="referralGrid">
+      <a data-referral="sitecheck" href="https://sitecheck.sucuri.net/" target="_blank" rel="noopener"><strong>Sucuri SiteCheck</strong><span>malware &amp; blacklist</span></a>
+      <a data-referral="virustotal" href="https://www.virustotal.com/" target="_blank" rel="noopener"><strong>VirusTotal</strong><span>zeci de motoare antivirus</span></a>
+      <a data-referral="transparency" href="https://transparencyreport.google.com/safe-browsing/search" target="_blank" rel="noopener"><strong>Google Transparency</strong><span>status Safe Browsing</span></a>
+      <a data-referral="ssllabs" href="https://www.ssllabs.com/ssltest/" target="_blank" rel="noopener"><strong>Qualys SSL Labs</strong><span>configurație TLS completă</span></a>
+      <a data-referral="securityheaders" href="https://securityheaders.com/" target="_blank" rel="noopener"><strong>securityheaders.com</strong><span>audit headere, rapid</span></a>
+      <a data-referral="observatory" href="https://developer.mozilla.org/en-US/observatory/" target="_blank" rel="noopener"><strong>Mozilla HTTP Observatory</strong><span>headere, TLS, cookie-uri</span></a>
+      <a data-referral="webcheck" href="https://web-check.xyz/" target="_blank" rel="noopener"><strong>Web-Check</strong><span>OSINT complet, open-source</span></a>
+    </div>
+    <p class="foot-note">Niciun apel de rețea din acest fișier nu trimite date către un server propriu — cererile merg direct din browserul tău către DNS-ul public, RDAP, crt.sh, ipapi.co și (dacă alegi) Google Safe Browsing.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- vitals (semnal animat de stare) ---------- */
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vitalsCanvas = document.getElementById('vitalsCanvas');
+  var vctx = vitalsCanvas.getContext('2d');
+  var cssW = 0, cssH = 90;
+  var vitalsState = 'idle';
+  var vitalsColor = null;
+
+  function getCssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  function fitCanvas() {
+    var rect = vitalsCanvas.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    cssW = rect.width || 300;
+    vitalsCanvas.width = Math.max(1, Math.round(cssW * dpr));
+    vitalsCanvas.height = Math.max(1, Math.round(cssH * dpr));
+    vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function drawVitalsFrame(t) {
+    var w = cssW, h = cssH;
+    vctx.clearRect(0, 0, w, h);
+    vctx.strokeStyle = vitalsColor || getCssVar('--ink-soft');
+    vctx.lineWidth = 2;
+    vctx.beginPath();
+    var mid = h / 2;
+    for (var x = 0; x <= w; x += 4) {
+      var y;
+      if (vitalsState === 'resolved') {
+        var cycle = 150;
+        var phase = x % cycle;
+        y = phase < 14 ? mid - Math.sin((phase / 14) * Math.PI) * 30 : mid;
+      } else if (vitalsState === 'scanning') {
+        y = mid + Math.sin(x * 0.045 + t * 0.006) * 24;
+      } else {
+        y = mid + Math.sin(x * 0.045 + t * 0.0018) * 8;
+      }
+      if (x === 0) vctx.moveTo(x, y); else vctx.lineTo(x, y);
+    }
+    vctx.stroke();
+    if (!reduceMotion) requestAnimationFrame(drawVitalsFrame);
+  }
+
+  window.addEventListener('resize', fitCanvas);
+  fitCanvas();
+  if (!reduceMotion) { requestAnimationFrame(drawVitalsFrame); } else { drawVitalsFrame(0); }
+
+  /* ---------- stare globală ---------- */
+  var PANEL_KEYS = ['dns', 'rdap', 'cert', 'headers', 'ip', 'reputation'];
+  var TERMINAL = ['ok', 'warn', 'issue', 'blocked'];
+  var scanState = { domain: null, ip: null, categories: {} };
+
+  function updateVitals() {
+    var statuses = PANEL_KEYS.map(function (k) { return scanState.categories[k]; });
+    var done = statuses.filter(function (s) { return TERMINAL.indexOf(s) !== -1; }).length;
+    var ok = statuses.filter(function (s) { return s === 'ok'; }).length;
+    var warn = statuses.filter(function (s) { return s === 'warn'; }).length;
+    var issue = statuses.filter(function (s) { return s === 'issue'; }).length;
+    var blocked = statuses.filter(function (s) { return s === 'blocked'; }).length;
+    var summaryEl = document.getElementById('vitalsSummary');
+    if (!scanState.domain) {
+      vitalsState = 'idle';
+      vitalsColor = null;
+      summaryEl.textContent = 'Introdu un domeniu pentru a începe.';
+    } else if (done < PANEL_KEYS.length) {
+      vitalsState = 'scanning';
+      vitalsColor = getCssVar('--chart');
+      summaryEl.textContent = 'Se verifică ' + scanState.domain + '… (' + done + '/' + PANEL_KEYS.length + ')';
+    } else {
+      vitalsState = 'resolved';
+      var worstVar = issue > 0 ? '--issue' : (warn > 0 ? '--warn' : '--ok');
+      vitalsColor = getCssVar(worstVar);
+      summaryEl.textContent = scanState.domain + ' — ' + ok + ' OK · ' + warn + ' de verificat · ' + issue + ' probleme · ' + blocked + ' blocate (necesită unealtă externă)';
+    }
+    if (reduceMotion) drawVitalsFrame(0);
+  }
+
+  function setPanelStatus(panel, status, label) {
+    panel.dataset.status = status;
+    panel.querySelector('.panel__badge').textContent = label;
+    scanState.categories[panel.dataset.panel] = status;
+    updateVitals();
+  }
+
+  /* ---------- utilitare ---------- */
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function addDeflistRow(dl, term, value) {
+    var dt = document.createElement('dt');
+    dt.textContent = term;
+    var dd = document.createElement('dd');
+    dd.textContent = value;
+    dl.appendChild(dt);
+    dl.appendChild(dd);
+  }
+
+  function formatDate(iso) {
+    try {
+      var d = new Date(iso);
+      if (isNaN(d.getTime())) return String(iso);
+      return d.toLocaleDateString('ro-RO', { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch (e) { return String(iso); }
+  }
+
+  function normalizeDomain(input) {
+    var v = (input || '').trim();
+    if (!v) return null;
+    if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(v)) v = 'https://' + v;
+    try {
+      var u = new URL(v);
+      return u.hostname.toLowerCase().replace(/\.$/, '');
+    } catch (e) { return null; }
+  }
+
+  function withTimeout(ms) {
+    var controller = new AbortController();
+    var id = setTimeout(function () { controller.abort(); }, ms);
+    return { signal: controller.signal, done: function () { clearTimeout(id); } };
+  }
+
+  function buildReferralLinks(domain) {
+    var enc = encodeURIComponent(domain);
+    return {
+      sitecheck: 'https://sitecheck.sucuri.net/results/' + enc,
+      virustotal: 'https://www.virustotal.com/gui/domain/' + enc,
+      transparency: 'https://transparencyreport.google.com/safe-browsing/search?url=' + enc,
+      ssllabs: 'https://www.ssllabs.com/ssltest/analyze.html?d=' + enc,
+      securityheaders: 'https://securityheaders.com/?q=' + enc,
+      observatory: 'https://developer.mozilla.org/en-US/observatory/',
+      webcheck: 'https://web-check.xyz/'
+    };
+  }
+
+  function updateReferralLinks(domain) {
+    var links = buildReferralLinks(domain);
+    Object.keys(links).forEach(function (key) {
+      var a = document.querySelector('[data-referral="' + key + '"]');
+      if (a) a.href = links[key];
+    });
+  }
+
+  /* ---------- DNS ---------- */
+  var DOH_TYPES = [
+    { code: 1, label: 'A' }, { code: 28, label: 'AAAA' }, { code: 15, label: 'MX' },
+    { code: 16, label: 'TXT' }, { code: 2, label: 'NS' }, { code: 5, label: 'CNAME' },
+    { code: 6, label: 'SOA' }, { code: 257, label: 'CAA' }
+  ];
+
+  function fetchDoH(domain, code, signal) {
+    return fetch('https://dns.google/resolve?name=' + encodeURIComponent(domain) + '&type=' + code, { signal: signal })
+      .then(function (res) { if (!res.ok) throw new Error('google doh ' + res.status); return res.json(); })
+      .catch(function () {
+        return fetch('https://cloudflare-dns.com/dns-query?name=' + encodeURIComponent(domain) + '&type=' + code, {
+          headers: { accept: 'application/dns-json' }, signal: signal
+        }).then(function (res) { if (!res.ok) throw new Error('cloudflare doh ' + res.status); return res.json(); });
+      });
+  }
+
+  function checkDNS(domain) {
+    var panel = document.querySelector('[data-panel="dns"]');
+    setPanelStatus(panel, 'loading', 'verific…');
+    var body = panel.querySelector('.panel__body');
+    body.innerHTML = '';
+    var t = withTimeout(9000);
+    return Promise.all(DOH_TYPES.map(function (type) {
+      return fetchDoH(domain, type.code, t.signal).then(function (data) { return { label: type.label, data: data }; }).catch(function () { return { label: type.label, data: null }; });
+    })).then(function (results) {
+      t.done();
+      var anyRecord = false, dnssec = false;
+      var table = document.createElement('table');
+      table.className = 'panel__table';
+      results.forEach(function (r) {
+        if (r.data && r.data.Answer && r.data.Answer.length) {
+          anyRecord = true;
+          if (r.data.AD) dnssec = true;
+          r.data.Answer.forEach(function (ans) {
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td>' + escapeHtml(r.label) + '</td><td>' + escapeHtml(ans.data) + '</td>';
+            table.appendChild(tr);
+            if ((r.label === 'A' || r.label === 'AAAA') && !scanState.ip) scanState.ip = ans.data;
+          });
+        }
+      });
+      if (!anyRecord) {
+        setPanelStatus(panel, 'issue', 'fără rezultat');
+        body.innerHTML = '<p class="panel__hint">Nu am găsit nicio înregistrare DNS. Verifică dacă domeniul e scris corect.</p>';
+      } else {
+        body.appendChild(table);
+        var note = document.createElement('p');
+        note.className = 'panel__note';
+        note.textContent = dnssec ? 'DNSSEC: răspuns autentificat (AD).' : 'DNSSEC: fără semnătură validată (AD absent).';
+        body.appendChild(note);
+        setPanelStatus(panel, dnssec ? 'ok' : 'warn', dnssec ? 'OK' : 'de verificat');
+      }
+    }).catch(function () {
+      t.done();
+      setPanelStatus(panel, 'blocked', 'indisponibil');
+      body.innerHTML = '<p class="panel__hint">Interogarea DNS a eșuat (rețea indisponibilă).</p>';
+    });
+  }
+
+  /* ---------- RDAP ---------- */
+  function checkRDAP(domain) {
+    var panel = document.querySelector('[data-panel="rdap"]');
+    setPanelStatus(panel, 'loading', 'verific…');
+    var body = panel.querySelector('.panel__body');
+    body.innerHTML = '';
+    var t = withTimeout(9000);
+    return fetch('https://rdap.org/domain/' + encodeURIComponent(domain), { signal: t.signal })
+      .then(function (res) { if (!res.ok) throw new Error('rdap ' + res.status); return res.json(); })
+      .then(function (data) {
+        t.done();
+        var events = data.events || [];
+        function findEvent(action) { var e = events.filter(function (ev) { return ev.eventAction === action; }); return e[0]; }
+        var reg = findEvent('registration'), exp = findEvent('expiration'), changed = findEvent('last changed');
+        var registrarEntity = (data.entities || []).filter(function (e) { return (e.roles || []).indexOf('registrar') !== -1; })[0];
+        var registrarName = '—';
+        if (registrarEntity && registrarEntity.vcardArray && registrarEntity.vcardArray[1]) {
+          var fnEntry = registrarEntity.vcardArray[1].filter(function (v) { return v[0] === 'fn'; })[0];
+          if (fnEntry) registrarName = fnEntry[3];
+        }
+        var nameservers = (data.nameservers || []).map(function (ns) { return ns.ldhName; }).join(', ') || '—';
+        var dl = document.createElement('dl');
+        dl.className = 'panel__deflist';
+        addDeflistRow(dl, 'Registrar', registrarName);
+        addDeflistRow(dl, 'Înregistrat', reg ? formatDate(reg.eventDate) : '—');
+        addDeflistRow(dl, 'Expiră', exp ? formatDate(exp.eventDate) : '—');
+        addDeflistRow(dl, 'Ultima modificare', changed ? formatDate(changed.eventDate) : '—');
+        addDeflistRow(dl, 'Nameservers', nameservers);
+        body.appendChild(dl);
+        var now = new Date();
+        var expDate = exp ? new Date(exp.eventDate) : null;
+        var isExpired = expDate && !isNaN(expDate.getTime()) && expDate < now;
+        var isExpiringSoon = expDate && !isExpired && !isNaN(expDate.getTime()) && (expDate.getTime() - now.getTime()) < (30 * 24 * 60 * 60 * 1000);
+        if (isExpired) { setPanelStatus(panel, 'issue', 'expirat'); }
+        else if (isExpiringSoon) { setPanelStatus(panel, 'warn', 'expiră curând'); }
+        else { setPanelStatus(panel, 'ok', 'OK'); }
+      }).catch(function () {
+        t.done();
+        setPanelStatus(panel, 'blocked', 'blocat');
+        body.innerHTML = '<p class="panel__hint">RDAP nu a răspuns (poate fi CORS sau un TLD fără RDAP). Verifică manual: <a href="https://lookup.icann.org/en/lookup?q=' + encodeURIComponent(domain) + '" target="_blank" rel="noopener">lookup.icann.org</a>.</p>';
+      });
+  }
+
+  /* ---------- SSL & certificat ---------- */
+  function checkCert(domain) {
+    var panel = document.querySelector('[data-panel="cert"]');
+    setPanelStatus(panel, 'loading', 'verific…');
+    var body = panel.querySelector('.panel__body');
+    body.innerHTML = '';
+    return fetch('https://' + domain + '/', { mode: 'no-cors', cache: 'no-store' })
+      .then(function () { return true; })
+      .catch(function () { return false; })
+      .then(function (reachable) {
+        var p1 = document.createElement('p');
+        p1.className = 'panel__note';
+        p1.textContent = reachable
+          ? 'HTTPS răspunde (conexiune TLS stabilită). Certificatul în sine nu poate fi citit din browser — vezi Certificate Transparency mai jos.'
+          : 'Nu am reușit conexiunea HTTPS către acest domeniu.';
+        body.appendChild(p1);
+
+        var t = withTimeout(10000);
+        return fetch('https://crt.sh/?q=' + encodeURIComponent(domain) + '&output=json', { signal: t.signal })
+          .then(function (res) { if (!res.ok) throw new Error('crt.sh ' + res.status); return res.json(); })
+          .then(function (data) {
+            t.done();
+            if (!Array.isArray(data) || !data.length) throw new Error('empty');
+            var sorted = data.slice().sort(function (a, b) { return new Date(b.not_before) - new Date(a.not_before); });
+            var latest = sorted[0];
+            var dl = document.createElement('dl');
+            dl.className = 'panel__deflist';
+            addDeflistRow(dl, 'Emitent', latest.issuer_name || '—');
+            addDeflistRow(dl, 'Valabil de la', formatDate(latest.not_before));
+            addDeflistRow(dl, 'Valabil până la', formatDate(latest.not_after));
+            var sans = Array.from(new Set(String(latest.name_value || '').split('\n'))).slice(0, 8).join(', ');
+            addDeflistRow(dl, 'Domenii acoperite', sans || '—');
+            body.appendChild(dl);
+            var expired = new Date(latest.not_after) < new Date();
+            if (expired) { setPanelStatus(panel, 'warn', 'expirat'); }
+            else if (!reachable) { setPanelStatus(panel, 'warn', 'neconectabil'); }
+            else { setPanelStatus(panel, 'ok', 'OK'); }
+          }).catch(function () {
+            t.done();
+            setPanelStatus(panel, reachable ? 'blocked' : 'issue', reachable ? 'parțial' : 'problemă');
+            var p2 = document.createElement('p');
+            p2.className = 'panel__hint';
+            p2.innerHTML = 'Certificate Transparency (crt.sh) nu a răspuns acum. Pentru configurația TLS completă: <a href="https://www.ssllabs.com/ssltest/analyze.html?d=' + encodeURIComponent(domain) + '" target="_blank" rel="noopener">SSL Labs</a>.';
+            body.appendChild(p2);
+          });
+      });
+  }
+
+  /* ---------- headere de securitate ---------- */
+  function checkHeaders(domain) {
+    var panel = document.querySelector('[data-panel="headers"]');
+    setPanelStatus(panel, 'loading', 'verific…');
+    var body = panel.querySelector('.panel__body');
+    body.innerHTML = '';
+    var wanted = [
+      ['content-security-policy', 'Content-Security-Policy'],
+      ['strict-transport-security', 'Strict-Transport-Security'],
+      ['x-frame-options', 'X-Frame-Options'],
+      ['x-content-type-options', 'X-Content-Type-Options'],
+      ['referrer-policy', 'Referrer-Policy'],
+      ['permissions-policy', 'Permissions-Policy']
+    ];
+    var t = withTimeout(8000);
+    return fetch('https://' + domain + '/', { signal: t.signal, cache: 'no-store' })
+      .then(function (res) {
+        t.done();
+        var present = 0;
+        var dl = document.createElement('dl');
+        dl.className = 'panel__deflist';
+        wanted.forEach(function (pair) {
+          var val = res.headers.get(pair[0]);
+          if (val) present++;
+          addDeflistRow(dl, pair[1], val || 'lipsă');
+        });
+        body.appendChild(dl);
+        setPanelStatus(panel, present >= 4 ? 'ok' : (present > 0 ? 'warn' : 'issue'), present >= 4 ? 'OK' : (present > 0 ? 'de verificat' : 'lipsesc'));
+      }).catch(function () {
+        t.done();
+        setPanelStatus(panel, 'blocked', 'blocat de CORS');
+        body.innerHTML = '<p class="panel__hint">Browserul nu poate citi headerele altui site din cauza CORS — e o regulă a browserului, nu o eroare a site-ului tău. Verifică direct: <a href="https://securityheaders.com/?q=' + encodeURIComponent(domain) + '" target="_blank" rel="noopener">securityheaders.com</a> · <a href="https://developer.mozilla.org/en-US/observatory/" target="_blank" rel="noopener">Mozilla Observatory</a>.</p>';
+      });
+  }
+
+  /* ---------- IP & găzduire ---------- */
+  function checkIP(domain) {
+    var panel = document.querySelector('[data-panel="ip"]');
+    setPanelStatus(panel, 'loading', 'verific…');
+    var body = panel.querySelector('.panel__body');
+    body.innerHTML = '';
+    var ensureIp = scanState.ip
+      ? Promise.resolve(scanState.ip)
+      : fetch('https://dns.google/resolve?name=' + encodeURIComponent(domain) + '&type=1')
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.Answer && data.Answer.length) { scanState.ip = data.Answer[0].data; }
+          return scanState.ip;
+        }).catch(function () { return null; });
+
+    return ensureIp.then(function (ip) {
+      if (!ip) {
+        setPanelStatus(panel, 'blocked', 'fără IP');
+        body.innerHTML = '<p class="panel__hint">Nu am putut afla adresa IP din DNS.</p>';
+        return;
+      }
+      var t = withTimeout(8000);
+      return fetch('https://ipapi.co/' + ip + '/json/', { signal: t.signal })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          t.done();
+          if (data.error) throw new Error(data.reason || 'ipapi error');
+          var dl = document.createElement('dl');
+          dl.className = 'panel__deflist';
+          addDeflistRow(dl, 'Adresă IP', data.ip || ip);
+          addDeflistRow(dl, 'Organizație / ASN', [data.asn, data.org].filter(Boolean).join(' · ') || '—');
+          addDeflistRow(dl, 'Locație', [data.city, data.region, data.country_name].filter(Boolean).join(', ') || '—');
+          body.appendChild(dl);
+          setPanelStatus(panel, 'ok', 'OK');
+        }).catch(function () {
+          t.done();
+          setPanelStatus(panel, 'blocked', 'indisponibil');
+          body.innerHTML = '<p class="panel__hint">Geolocalizarea IP nu a răspuns (posibil limită de interogări). IP găsit: <code>' + escapeHtml(ip) + '</code>.</p>';
+        });
+    });
+  }
+
+  /* ---------- reputație & blacklist ---------- */
+  function checkReputation(domain) {
+    var panel = document.querySelector('[data-panel="reputation"]');
+    var body = document.getElementById('reputationResults');
+    var links = buildReferralLinks(domain);
+    var key = document.getElementById('gsbKey').value.trim();
+    if (!key) {
+      setPanelStatus(panel, 'blocked', 'necesită cheie');
+      body.innerHTML = '<p class="panel__hint">Verificarea automată are nevoie de o cheie API Google Safe Browsing (gratuită, din Google Cloud Console) — lipește-o mai sus și scanează din nou. Fără ea, mergi direct la <a href="' + links.sitecheck + '" target="_blank" rel="noopener">SiteCheck</a> · <a href="' + links.virustotal + '" target="_blank" rel="noopener">VirusTotal</a> · <a href="' + links.transparency + '" target="_blank" rel="noopener">Google Transparency Report</a>.</p>';
+      return Promise.resolve();
+    }
+    setPanelStatus(panel, 'loading', 'verific…');
+    var t = withTimeout(8000);
+    return fetch('https://safebrowsing.googleapis.com/v4/threatMatches:find?key=' + encodeURIComponent(key), {
+      method: 'POST', signal: t.signal, headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        client: { clientId: 'scryveil', clientVersion: '1.0.0' },
+        threatInfo: {
+          threatTypes: ['MALWARE', 'SOCIAL_ENGINEERING', 'UNWANTED_SOFTWARE', 'POTENTIALLY_HARMFUL_APPLICATION'],
+          platformTypes: ['ANY_PLATFORM'], threatEntryTypes: ['URL'],
+          threatEntries: [{ url: 'https://' + domain }]
+        }
+      })
+    }).then(function (res) { if (!res.ok) throw new Error('safe browsing ' + res.status); return res.json(); })
+      .then(function (data) {
+        t.done();
+        if (data.matches && data.matches.length) {
+          var types = Array.from(new Set(data.matches.map(function (m) { return m.threatType; }))).join(', ');
+          setPanelStatus(panel, 'issue', 'marcat');
+          body.innerHTML = '<p class="panel__hint">Google Safe Browsing a marcat acest domeniu: ' + escapeHtml(types) + '.</p>';
+        } else {
+          setPanelStatus(panel, 'ok', 'OK');
+          body.innerHTML = '<p class="panel__note">Google Safe Browsing nu a găsit nimic suspect.</p>';
+        }
+      }).catch(function () {
+        t.done();
+        setPanelStatus(panel, 'blocked', 'eroare cheie');
+        body.innerHTML = '<p class="panel__hint">Cererea către Safe Browsing a eșuat (cheie greșită, cotă depășită sau rețea blocată). Verifică manual: <a href="' + links.sitecheck + '" target="_blank" rel="noopener">SiteCheck</a> · <a href="' + links.virustotal + '" target="_blank" rel="noopener">VirusTotal</a>.</p>';
+      });
+  }
+
+  /* ---------- orchestrare ---------- */
+  function resetPanels() {
+    document.querySelectorAll('.panel').forEach(function (panel) {
+      setPanelStatus(panel, 'idle', '—');
+    });
+  }
+
+  function runScan(rawInput) {
+    var domain = normalizeDomain(rawInput);
+    var errorEl = document.getElementById('formError');
+    if (!domain) {
+      errorEl.textContent = 'Domeniul nu pare valid — încearcă „exemplu.ro” sau „https://exemplu.ro”.';
+      return;
+    }
+    errorEl.textContent = '';
+    scanState = { domain: domain, ip: null, categories: {} };
+    resetPanels();
+    updateReferralLinks(domain);
+    Promise.allSettled
+      ? Promise.allSettled([checkDNS(domain), checkRDAP(domain), checkCert(domain), checkHeaders(domain), checkIP(domain), checkReputation(domain)])
+      : Promise.all([checkDNS(domain), checkRDAP(domain), checkCert(domain), checkHeaders(domain), checkIP(domain), checkReputation(domain)].map(function (p) { return p.catch(function () {}); }));
+  }
+
+  document.getElementById('scanForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    runScan(document.getElementById('domainInput').value);
+  });
+})();
+</script>
+</body>
+</html>
