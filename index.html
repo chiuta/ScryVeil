@@ -212,7 +212,7 @@
       <a data-referral="observatory" href="https://developer.mozilla.org/en-US/observatory/" target="_blank" rel="noopener"><strong>Mozilla HTTP Observatory</strong><span>headere, TLS, cookie-uri</span></a>
       <a data-referral="webcheck" href="https://web-check.xyz/" target="_blank" rel="noopener"><strong>Web-Check</strong><span>OSINT complet, open-source</span></a>
     </div>
-    <p class="foot-note">Niciun apel de rețea din acest fișier nu trimite date către un server propriu — cererile merg direct din browserul tău către DNS-ul public, RDAP, crt.sh, ipapi.co și (dacă alegi) Google Safe Browsing.</p>
+    <p class="foot-note">Niciun apel de rețea din acest fișier nu trimite date către un server propriu — cererile merg direct din browserul tău către DNS-ul public (Google / Cloudflare), rdap.org, crt.sh, ipapi.co, domeniul verificat însuși (conexiune HTTPS directă) și (dacă alegi) Google Safe Browsing. Aceste servicii terțe primesc domeniul introdus și adresa ta IP.</p>
   </footer>
 </div>
 
@@ -265,7 +265,7 @@
     if (!reduceMotion) requestAnimationFrame(drawVitalsFrame);
   }
 
-  window.addEventListener('resize', fitCanvas);
+  window.addEventListener('resize', function () { fitCanvas(); if (reduceMotion) drawVitalsFrame(0); });
   fitCanvas();
   if (!reduceMotion) { requestAnimationFrame(drawVitalsFrame); } else { drawVitalsFrame(0); }
 
@@ -374,6 +374,8 @@
     { code: 6, label: 'SOA' }, { code: 257, label: 'CAA' }
   ];
 
+  var TYPE_LABELS = { 1: 'A', 28: 'AAAA', 15: 'MX', 16: 'TXT', 2: 'NS', 5: 'CNAME', 6: 'SOA', 257: 'CAA' };
+
   function fetchDoH(domain, code, signal) {
     return fetch('https://dns.google/resolve?name=' + encodeURIComponent(domain) + '&type=' + code, { signal: signal })
       .then(function (res) { if (!res.ok) throw new Error('google doh ' + res.status); return res.json(); })
@@ -394,7 +396,7 @@
       return fetchDoH(domain, type.code, t.signal).then(function (data) { return { label: type.label, data: data }; }).catch(function () { return { label: type.label, data: null }; });
     })).then(function (results) {
       t.done();
-      var anyRecord = false, dnssec = false;
+      var anyRecord = false, dnssec = false, seenRows = {};
       var table = document.createElement('table');
       table.className = 'panel__table';
       results.forEach(function (r) {
@@ -402,10 +404,14 @@
           anyRecord = true;
           if (r.data.AD) dnssec = true;
           r.data.Answer.forEach(function (ans) {
+            var rowLabel = TYPE_LABELS[ans.type] || r.label;
+            var rowKey = rowLabel + '|' + ans.data;
+            if (seenRows[rowKey]) return;
+            seenRows[rowKey] = true;
             var tr = document.createElement('tr');
-            tr.innerHTML = '<td>' + escapeHtml(r.label) + '</td><td>' + escapeHtml(ans.data) + '</td>';
+            tr.innerHTML = '<td>' + escapeHtml(rowLabel) + '</td><td>' + escapeHtml(ans.data) + '</td>';
             table.appendChild(tr);
-            if ((r.label === 'A' || r.label === 'AAAA') && !scanState.ip) scanState.ip = ans.data;
+            if ((ans.type === 1 || ans.type === 28) && !scanState.ip) scanState.ip = ans.data;
           });
         }
       });
@@ -447,7 +453,7 @@
           var fnEntry = registrarEntity.vcardArray[1].filter(function (v) { return v[0] === 'fn'; })[0];
           if (fnEntry) registrarName = fnEntry[3];
         }
-        var nameservers = (data.nameservers || []).map(function (ns) { return ns.ldhName; }).join(', ') || '—';
+        var nameservers = (data.nameservers || []).map(function (ns) { return ns.ldhName; }).filter(Boolean).join(', ') || '—';
         var dl = document.createElement('dl');
         dl.className = 'panel__deflist';
         addDeflistRow(dl, 'Registrar', registrarName);
@@ -476,9 +482,10 @@
     setPanelStatus(panel, 'loading', 'verific…');
     var body = panel.querySelector('.panel__body');
     body.innerHTML = '';
-    return fetch('https://' + domain + '/', { mode: 'no-cors', cache: 'no-store' })
-      .then(function () { return true; })
-      .catch(function () { return false; })
+    var tReach = withTimeout(10000);
+    return fetch('https://' + domain + '/', { mode: 'no-cors', cache: 'no-store', signal: tReach.signal })
+      .then(function () { tReach.done(); return true; })
+      .catch(function () { tReach.done(); return false; })
       .then(function (reachable) {
         var p1 = document.createElement('p');
         p1.className = 'panel__note';
@@ -542,10 +549,18 @@
         wanted.forEach(function (pair) {
           var val = res.headers.get(pair[0]);
           if (val) present++;
-          addDeflistRow(dl, pair[1], val || 'lipsă');
+          addDeflistRow(dl, pair[1], val || 'lipsă sau neexpus prin CORS');
         });
         body.appendChild(dl);
-        setPanelStatus(panel, present >= 4 ? 'ok' : (present > 0 ? 'warn' : 'issue'), present >= 4 ? 'OK' : (present > 0 ? 'de verificat' : 'lipsesc'));
+        if (present === 0) {
+          var hn = document.createElement('p');
+          hn.className = 'panel__hint';
+          hn.textContent = 'Niciun header nu a fost vizibil. Browserul expune altui origin doar headerele permise prin Access-Control-Expose-Headers, deci rezultatul nu dovedește că lipsesc — verifică cu securityheaders.com.';
+          body.appendChild(hn);
+          setPanelStatus(panel, 'blocked', 'neexpuse');
+        } else {
+          setPanelStatus(panel, present >= 4 ? 'ok' : 'warn', present >= 4 ? 'OK' : 'de verificat');
+        }
       }).catch(function () {
         t.done();
         setPanelStatus(panel, 'blocked', 'blocat de CORS');
@@ -561,10 +576,11 @@
     body.innerHTML = '';
     var ensureIp = scanState.ip
       ? Promise.resolve(scanState.ip)
-      : fetch('https://dns.google/resolve?name=' + encodeURIComponent(domain) + '&type=1')
-        .then(function (res) { return res.json(); })
+      : fetch('https://dns.google/resolve?name=' + encodeURIComponent(domain) + '&type=1', { signal: withTimeout(8000).signal })
+        .then(function (res) { if (!res.ok) throw new Error('doh ' + res.status); return res.json(); })
         .then(function (data) {
-          if (data.Answer && data.Answer.length) { scanState.ip = data.Answer[0].data; }
+          var a = (data.Answer || []).filter(function (x) { return x.type === 1; })[0];
+          if (a) { scanState.ip = a.data; }
           return scanState.ip;
         }).catch(function () { return null; });
 
@@ -643,7 +659,10 @@
     });
   }
 
+  var scanning = false;
+
   function runScan(rawInput) {
+    if (scanning) return;
     var domain = normalizeDomain(rawInput);
     var errorEl = document.getElementById('formError');
     if (!domain) {
@@ -654,9 +673,15 @@
     scanState = { domain: domain, ip: null, categories: {} };
     resetPanels();
     updateReferralLinks(domain);
-    Promise.allSettled
-      ? Promise.allSettled([checkDNS(domain), checkRDAP(domain), checkCert(domain), checkHeaders(domain), checkIP(domain), checkReputation(domain)])
-      : Promise.all([checkDNS(domain), checkRDAP(domain), checkCert(domain), checkHeaders(domain), checkIP(domain), checkReputation(domain)].map(function (p) { return p.catch(function () {}); }));
+    scanning = true;
+    var submitBtn = document.querySelector('#scanForm button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+    var jobs = [checkDNS(domain), checkRDAP(domain), checkCert(domain), checkHeaders(domain), checkIP(domain), checkReputation(domain)]
+      .map(function (p) { return Promise.resolve(p).catch(function () {}); });
+    Promise.all(jobs).then(function () {
+      scanning = false;
+      if (submitBtn) submitBtn.disabled = false;
+    });
   }
 
   document.getElementById('scanForm').addEventListener('submit', function (e) {
