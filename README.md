@@ -44,6 +44,10 @@ Aplicația **nu este offline**: verificările cer conexiune și contactează ter
 
 Acești terți primesc domeniul introdus și adresa ta IP. Linkurile din „Trimiteri externe” se deschid doar la click. Nu am găsit în cod `localStorage`, `IndexedDB` sau cookie-uri; cheia Safe Browsing nu este persistată.
 
+## Limitări și utilizare responsabilă
+
+Verificările folosesc doar surse publice și cereri obișnuite din browser, dar rezultatele sunt informative și nu constituie un audit de securitate complet; „blocat” înseamnă că browserul (CORS) nu permite citirea, nu că problema nu există. Folosește instrumentul doar pentru domenii proprii sau pentru care ai acordul titularului.
+
 ## Rulare locală / offline
 
 Descarcă `index.html` și deschide-l în browser. Interfața se încarcă fără internet, dar scanările necesită internet.
@@ -59,3 +63,5 @@ Alexio — Alexandru-Ionuț Chiuță, contact: alexio@trom.tf.
 ## English summary
 
 ScryVeil is a single-file browser-based site security checker: DNS records, RDAP registration data, certificate transparency, HTTPS/security headers (when readable), IP/hosting info and optional Google Safe Browsing lookups, plus links to external scanners. Requests go straight from your browser to public DNS (Google/Cloudflare), rdap.org, crt.sh, ipapi.co, the scanned domain and optionally Safe Browsing; nothing is stored. License not yet declared.
+
+Audit: 2026-10-10 — verificat codul (gazdele contactate corespund secțiunii de mai sus; datele din răspunsuri sunt escapate sau inserate prin textContent), accesibilitatea (axe) și funcționarea; adăugat avertisment de utilizare.
