@@ -2,6 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src https:; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ScryVeil — diagnostic de securitate pentru orice site</title>
 <style>
@@ -144,7 +145,7 @@
 
 <div class="wrap">
   <header class="masthead">
-    <div class="eyebrow">diagnostic de site // v1.0 // rulează în browser, fără server propriu · necesită internet</div>
+    <div class="eyebrow">diagnostic de site // v1.0.1 // rulează în browser, fără server propriu · necesită internet</div>
     <h1 class="brand">ScryVeil</h1>
     <p class="tagline">ridică vălul tehnic din jurul oricărui domeniu — ce se vede direct din browser, și ce trimitem mai departe la unealta potrivită</p>
     <form id="scanForm" class="scan-form">
@@ -156,6 +157,7 @@
     <p class="arch-note" style="margin-top:10px">Prin „Scanează”, domeniul introdus și adresa ta IP sunt trimise direct din browser către servicii terțe (Google/Cloudflare DNS, rdap.org, crt.sh, ipapi.co, domeniul verificat și, dacă îți pui cheie, Google Safe Browsing). Nu se trimite nimic până nu apeși butonul.</p>
   </header>
 
+  <main id="content">
   <div class="vitals">
     <canvas id="vitalsCanvas" role="img" aria-label="indicator animat al stării scanării"></canvas>
     <div class="vitals__summary" id="vitalsSummary" aria-live="polite">Introdu un domeniu pentru a începe.</div>
@@ -163,7 +165,7 @@
 
   <p class="arch-note">DNS-ul, certificatul (transparency log) și IP-ul se verifică direct din acest fișier. Headerele altui domeniu sau o bază de reputație la nivel de server nu pot fi citite dintr-o pagină statică — panourile marcate „blocat” explică motivul tehnic și trimit spre unealta care chiar poate face verificarea aceea.</p>
 
-  <main class="panels" id="panels">
+  <div class="panels" id="panels">
     <section class="panel" data-panel="dns" data-status="idle">
       <div class="panel__head"><h2 class="panel__title">DNS &amp; domeniu</h2><span class="panel__badge">—</span></div>
       <div class="panel__body"><p class="panel__hint">Înregistrări A, AAAA, MX, TXT, NS, CNAME, SOA, CAA + semnal DNSSEC.</p></div>
@@ -200,6 +202,7 @@
         <div class="panel__results" id="reputationResults"><p class="panel__hint">Apasă „Scanează” pentru rezultat.</p></div>
       </div>
     </section>
+  </div>
   </main>
 
   <footer class="referrals">
@@ -341,6 +344,22 @@
       var u = new URL(v);
       return u.hostname.toLowerCase().replace(/\.$/, '');
     } catch (e) { return null; }
+  }
+
+  // Returnează un mesaj de eroare (string) dacă gazda nu e un nume de domeniu public valid, altfel null.
+  function domainProblem(rawInput, domain) {
+    if (!(rawInput || '').trim()) return 'Scrie un domeniu, de exemplu „exemplu.ro”.';
+    if (!domain) return 'Domeniul nu pare valid — încearcă „exemplu.ro” sau „https://exemplu.ro”.';
+    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(domain) || domain.indexOf(':') !== -1 || domain.charAt(0) === '[') {
+      return 'Adresele IP nu sunt acceptate — introdu un nume de domeniu (de exemplu „exemplu.ro”).';
+    }
+    if (domain.indexOf('.') === -1 || /(^|\.)(localhost|local|internal|lan|home|test|invalid|example)$/.test(domain)) {
+      return 'Aplicația verifică doar domenii publice (de exemplu „exemplu.ro”); „' + domain + '” nu poate fi interogat din DNS-ul public.';
+    }
+    if (domain.length > 253 || !/^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9-]{2,63}$/.test(domain.replace(/^xn--/, 'xn--'))) {
+      return 'Domeniul conține caractere sau o structură nepermise — folosește litere, cifre și cratime, separate prin puncte.';
+    }
+    return null;
   }
 
   function withTimeout(ms) {
@@ -668,8 +687,9 @@
     if (scanning) return;
     var domain = normalizeDomain(rawInput);
     var errorEl = document.getElementById('formError');
-    if (!domain) {
-      errorEl.textContent = 'Domeniul nu pare valid — încearcă „exemplu.ro” sau „https://exemplu.ro”.';
+    var problem = domainProblem(rawInput, domain);
+    if (problem) {
+      errorEl.textContent = problem;
       return;
     }
     errorEl.textContent = '';

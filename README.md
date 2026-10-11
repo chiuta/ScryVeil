@@ -52,6 +52,15 @@ Verificările folosesc doar surse publice și cereri obișnuite din browser, dar
 
 Descarcă `index.html` și deschide-l în browser. Interfața se încarcă fără internet, dar scanările necesită internet.
 
+## Istoric / Changelog
+
+Ultima actualizare: 11 octombrie 2026 (versiune 1.0.1).
+
+- Câmpul de domeniu validează acum intrarea: text gol, „localhost”, adrese IP, nume fără punct sau cu caractere nepermise primesc un mesaj clar în `#formError`.
+- Adăugat Content-Security-Policy (meta): fără surse externe de script/stil/imagini; `connect-src https:` este necesar pentru că aplicația interoghează și domeniul introdus de utilizator.
+- Conținutul principal este încadrat în `<main>`; axe-core: 0 violări la 1280 și 360 px.
+- Nerezolvat (limitare declarată): aplicația funcționează doar online; licența rămâne nedeclarată (decizia autorului).
+
 ## Licență
 
 Licența nu este încă declarată explicit în acest repository; vezi nota din aplicație. Aplicația nu conține o declarație de licență.
