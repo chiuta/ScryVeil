@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-k53pdxisngcy00MiZ1j7GAajTDrpi3A9O1jyH0TQpr0='; style-src 'unsafe-inline'; img-src data:; connect-src https:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-mSu0mJ8ezB/jJvWqZnZy4ypmhs1AAZJWCeNp9bwVP9I='; style-src 'unsafe-inline'; img-src data:; connect-src https:; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ScryVeil — diagnostic de securitate pentru orice site</title>
 <style>
@@ -88,6 +88,7 @@
   }
   .scan-form button:hover { background: var(--ink); }
   .scan-form button:focus-visible { outline: 3px solid var(--pulse); outline-offset: 2px; }
+  .scan-form input[aria-invalid="true"] { border-color: var(--issue); }
   .form-error { width: 100%; color: var(--issue); font-family: var(--font-mono); font-size: 13px; min-height: 18px; }
 
   .vitals { margin: 22px 0 10px; border: 2px solid var(--ink); background: var(--panel); border-radius: var(--radius); padding: 10px 14px 14px; }
@@ -170,7 +171,7 @@
 
 <div class="wrap">
   <header class="masthead">
-    <div class="eyebrow">diagnostic de site // v1.0.2 // rulează în browser, fără server propriu · necesită internet</div>
+    <div class="eyebrow">diagnostic de site // v1.0.3 // rulează în browser, fără server propriu · necesită internet</div>
     <h1 class="brand">ScryVeil</h1>
     <p class="tagline">ridică vălul tehnic din jurul oricărui domeniu — ce se vede direct din browser, și ce trimitem mai departe la unealta potrivită</p>
     <form id="scanForm" class="scan-form">
@@ -382,6 +383,9 @@
     if (!domain) return 'Domeniul nu pare valid — încearcă „exemplu.ro” sau „https://exemplu.ro”.';
     if (/^\d{1,3}(\.\d{1,3}){3}$/.test(domain) || domain.indexOf(':') !== -1 || domain.charAt(0) === '[') {
       return 'Adresele IP nu sunt acceptate — introdu un nume de domeniu (de exemplu „exemplu.ro”).';
+    }
+    if (/[^a-z0-9.-]/.test(domain)) {
+      return 'Domeniul conține caractere sau o structură nepermise — folosește litere, cifre și cratime, separate prin puncte.';
     }
     if (domain.indexOf('.') === -1 || /(^|\.)(localhost|local|internal|lan|home|test|invalid|example)$/.test(domain)) {
       return 'Aplicația verifică doar domenii publice (de exemplu „exemplu.ro”); „' + domain + '” nu poate fi interogat din DNS-ul public.';
@@ -713,19 +717,30 @@
 
   var scanning = false;
 
+  function showFormError(msg) {
+    var inputEl = document.getElementById('domainInput');
+    document.getElementById('formError').textContent = msg;
+    inputEl.setAttribute('aria-invalid', 'true');
+    inputEl.setAttribute('aria-describedby', 'formError');
+    inputEl.focus();
+    try { document.getElementById('formError').scrollIntoView({ block: 'nearest' }); } catch (e) {}
+  }
+
   function runScan(rawInput) {
     if (scanning) return;
     var domain = normalizeDomain(rawInput);
     var errorEl = document.getElementById('formError');
     var problem = domainProblem(rawInput, domain);
+    var inputEl = document.getElementById('domainInput');
     if (problem) {
-      errorEl.textContent = problem;
+      showFormError(problem);
       return;
     }
     if (navigator.onLine === false) {
-      errorEl.textContent = 'Nu ai conexiune la internet: verificările contactează servicii externe. Reconectează-te și apasă din nou „Scanează”.';
+      showFormError('Nu ai conexiune la internet: verificările contactează servicii externe. Reconectează-te și apasă din nou „Scanează”.');
       return;
     }
+    inputEl.removeAttribute('aria-invalid');
     document.getElementById('reportBar').hidden = true;
     document.getElementById('reportMsg').textContent = '';
     errorEl.textContent = '';
@@ -782,6 +797,10 @@
     var qd = new URLSearchParams(location.search).get('d');
     if (qd) document.getElementById('domainInput').value = qd.slice(0, 253);
   } catch (e) {}
+
+  document.getElementById('domainInput').addEventListener('input', function () {
+    if (this.getAttribute('aria-invalid')) { this.removeAttribute('aria-invalid'); document.getElementById('formError').textContent = ''; }
+  });
 
   document.getElementById('scanForm').addEventListener('submit', function (e) {
     e.preventDefault();

@@ -54,8 +54,9 @@ Descarcă `index.html` și deschide-l în browser. Interfața se încarcă făr�
 
 ## Istoric / Changelog
 
-Ultima actualizare: 11 octombrie 2026 (versiune 1.0.2).
+Ultima actualizare: 11 octombrie 2026 (versiune 1.0.3).
 
+- Eroarea de validare a domeniului este acum vizibilă și accesibilă: câmpul primește focus și `aria-invalid`, chenar roșu, mesajul este legat prin `aria-describedby` și se șterge la următoarea tastare; text cu spații sau caractere speciale primește mesajul despre caractere nepermise (nu mai apare forma codificată `a%20b`).
 - După fiecare scanare apar „Copiază raportul” și „Descarcă raport .txt” (raport text generat local din panouri); fără conexiune, „Scanează” afișează un mesaj clar în loc să pornească cereri care ar eșua.
 - Tema întunecată automată (`prefers-color-scheme`), stil de tipărire pentru rezultate, prefill al domeniului din `?d=exemplu.ro` (fără scanare automată).
 - CSP: `script-src` pe hash SHA-256, fără `'unsafe-inline'` pentru scripturi.
