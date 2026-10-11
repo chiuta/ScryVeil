@@ -33,7 +33,7 @@ Plus „Trimiteri externe” (se deschid în filă nouă, cu domeniul completat)
 
 ## Confidențialitate și rețea
 
-Aplicația **nu este offline**: verificările cer conexiune și contactează terți direct din browserul tău. Pagina însăși declară că nu trimite date către un server propriu. Gazde contactate, la apăsarea „Scanează”:
+Aplicația **nu este offline**: verificările cer conexiune și contactează terți direct din browserul tău. Pagina însăși declară că nu trimite date către un server propriu și afișează, sub câmpul de scanare, ce date pleacă și către cine (nimic nu se trimite până nu apeși „Scanează”). Gazde contactate, la apăsarea „Scanează”:
 
 - `dns.google` și `cloudflare-dns.com` (interogări DNS-over-HTTPS cu domeniul introdus);
 - `rdap.org` (date de înregistrare);
