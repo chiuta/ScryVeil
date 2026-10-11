@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src https:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-k53pdxisngcy00MiZ1j7GAajTDrpi3A9O1jyH0TQpr0='; style-src 'unsafe-inline'; img-src data:; connect-src https:; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ScryVeil — diagnostic de securitate pentru orice site</title>
 <style>
@@ -27,6 +27,18 @@
     --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
     --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     --radius: 4px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #101a16; --paper-grid: #1a2a24; --panel: #17231e; --ink: #e6efe9; --ink-soft: #a5b7ac;
+      --chart: #4fc1a6; --chart-dim: #1d4a3f; --pulse: #ff8a6e;
+      --ok: #6fd1a0; --ok-bg: #153325; --warn: #e6b04a; --warn-bg: #3a2c0e;
+      --issue: #ff8a96; --issue-bg: #3d1a20; --blocked: #b4b8c0; --blocked-bg: #26292e;
+    }
+    .scan-form button[type="submit"] { color: #06130f; }
+    .scan-form button[type="submit"]:hover { background: var(--pulse); }
+    .referral-grid a:hover { color: var(--paper); }
   }
 
   * { box-sizing: border-box; }
@@ -131,7 +143,20 @@
   .referral-grid span { font-size: 11.5px; color: var(--ink-soft); }
   .referral-grid a:hover span { color: var(--chart-dim); }
 
+  .report-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .report-bar[hidden] { display: none; }
+  .report-bar button { padding: 8px 14px; border: 2px solid var(--ink); background: var(--panel); color: var(--ink); font-family: var(--font-mono); font-size: 12.5px; font-weight: 600; border-radius: var(--radius); cursor: pointer; }
+  .report-bar button:hover { background: var(--ink); color: var(--paper); }
+  .report-bar button:focus-visible { outline: 3px solid var(--pulse); outline-offset: 2px; }
   .foot-note { font-size: 11.5px; color: var(--ink-soft); margin-top: 22px; }
+
+  @media print {
+    body { background: #fff; color: #000; }
+    .scan-form, .report-bar, .vitals canvas, footer.referrals, .arch-note { display: none !important; }
+    .panels { display: block; }
+    .panel { break-inside: avoid; margin-bottom: 10px; border-color: #000 !important; }
+    .wrap { padding: 0; }
+  }
 
   @media (max-width: 560px) {
     .scan-form { flex-direction: column; }
@@ -145,7 +170,7 @@
 
 <div class="wrap">
   <header class="masthead">
-    <div class="eyebrow">diagnostic de site // v1.0.1 // rulează în browser, fără server propriu · necesită internet</div>
+    <div class="eyebrow">diagnostic de site // v1.0.2 // rulează în browser, fără server propriu · necesită internet</div>
     <h1 class="brand">ScryVeil</h1>
     <p class="tagline">ridică vălul tehnic din jurul oricărui domeniu — ce se vede direct din browser, și ce trimitem mai departe la unealta potrivită</p>
     <form id="scanForm" class="scan-form">
@@ -161,6 +186,11 @@
   <div class="vitals">
     <canvas id="vitalsCanvas" role="img" aria-label="indicator animat al stării scanării"></canvas>
     <div class="vitals__summary" id="vitalsSummary" aria-live="polite">Introdu un domeniu pentru a începe.</div>
+    <div class="report-bar" id="reportBar" hidden>
+      <button type="button" id="btnCopyReport">Copiază raportul</button>
+      <button type="button" id="btnSaveReport">Descarcă raport .txt</button>
+      <span class="vitals__summary" id="reportMsg" role="status"></span>
+    </div>
   </div>
 
   <p class="arch-note">DNS-ul, certificatul (transparency log) și IP-ul se verifică direct din acest fișier. Headerele altui domeniu sau o bază de reputație la nivel de server nu pot fi citite dintr-o pagină statică — panourile marcate „blocat” explică motivul tehnic și trimit spre unealta care chiar poate face verificarea aceea.</p>
@@ -692,6 +722,12 @@
       errorEl.textContent = problem;
       return;
     }
+    if (navigator.onLine === false) {
+      errorEl.textContent = 'Nu ai conexiune la internet: verificările contactează servicii externe. Reconectează-te și apasă din nou „Scanează”.';
+      return;
+    }
+    document.getElementById('reportBar').hidden = true;
+    document.getElementById('reportMsg').textContent = '';
     errorEl.textContent = '';
     scanState = { domain: domain, ip: null, categories: {} };
     resetPanels();
@@ -704,8 +740,48 @@
     Promise.all(jobs).then(function () {
       scanning = false;
       if (submitBtn) submitBtn.disabled = false;
+      document.getElementById('reportBar').hidden = false;
     });
   }
+
+  /* ---------- raport text (local, fără rețea) ---------- */
+  function buildReport() {
+    var lines = ['ScryVeil — raport pentru ' + (scanState.domain || '?'), 'Generat: ' + new Date().toISOString(), ''];
+    document.querySelectorAll('.panel').forEach(function (panel) {
+      var title = panel.querySelector('.panel__title').textContent;
+      var badge = panel.querySelector('.panel__badge').textContent;
+      var body = panel.querySelector('.panel__body');
+      var clone = body.cloneNode(true);
+      clone.querySelectorAll('input,script,style').forEach(function (n) { n.remove(); });
+      clone.querySelectorAll('td,th').forEach(function (n) { n.appendChild(document.createTextNode(' ')); });
+      clone.querySelectorAll('tr,p,dt,dd,li,div,br').forEach(function (n) { n.appendChild(document.createTextNode('\n')); });
+      var txt = clone.textContent.replace(/[ \t]+/g, ' ').replace(/\n[ \t]*/g, '\n').replace(/\n{2,}/g, '\n').trim();
+      lines.push('== ' + title + ' [' + badge + '] ==', txt, '');
+    });
+    lines.push('Rezultate informative, nu un audit complet; „blocat” = browserul nu poate citi, nu că problema nu există.');
+    return lines.join('\n');
+  }
+  function reportMsg(m) { document.getElementById('reportMsg').textContent = m; }
+  document.getElementById('btnCopyReport').addEventListener('click', function () {
+    var txt = buildReport();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(function () { reportMsg('Raport copiat.'); }, function () { reportMsg('Copierea a eșuat; folosește „Descarcă raport”.'); });
+    } else { reportMsg('Clipboard indisponibil; folosește „Descarcă raport”.'); }
+  });
+  document.getElementById('btnSaveReport').addEventListener('click', function () {
+    var blob = new Blob([buildReport()], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'scryveil-' + (scanState.domain || 'raport').replace(/[^a-z0-9.-]/g, '_') + '.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    reportMsg('Raport descărcat.');
+  });
+  /* prefill din ?d=domeniu (fără scanare automată: nimic nu pleacă până nu apeși „Scanează”) */
+  try {
+    var qd = new URLSearchParams(location.search).get('d');
+    if (qd) document.getElementById('domainInput').value = qd.slice(0, 253);
+  } catch (e) {}
 
   document.getElementById('scanForm').addEventListener('submit', function (e) {
     e.preventDefault();

@@ -21,7 +21,7 @@ ScryVeil este o aplicație single-file (`index.html`) care „ridică vălul teh
 - **IP & găzduire** — adresă IP, organizație/ASN, locație aproximativă.
 - **Reputație & blacklist** — verificare Google Safe Browsing dacă introduci opțional o cheie API proprie.
 
-Plus „Trimiteri externe” (se deschid în filă nouă, cu domeniul completat): Sucuri SiteCheck, VirusTotal, Google Transparency, Qualys SSL Labs, securityheaders.com, Mozilla HTTP Observatory, Web-Check. Un indicator animat arată starea scanării. Interfața este în română.
+Plus raport text local (copiere/descărcare) și „Trimiteri externe” (se deschid în filă nouă, cu domeniul completat): Sucuri SiteCheck, VirusTotal, Google Transparency, Qualys SSL Labs, securityheaders.com, Mozilla HTTP Observatory, Web-Check. Un indicator animat arată starea scanării. Interfața este în română.
 
 ## Manual de utilizare
 
@@ -54,8 +54,11 @@ Descarcă `index.html` și deschide-l în browser. Interfața se încarcă făr�
 
 ## Istoric / Changelog
 
-Ultima actualizare: 11 octombrie 2026 (versiune 1.0.1).
+Ultima actualizare: 11 octombrie 2026 (versiune 1.0.2).
 
+- După fiecare scanare apar „Copiază raportul” și „Descarcă raport .txt” (raport text generat local din panouri); fără conexiune, „Scanează” afișează un mesaj clar în loc să pornească cereri care ar eșua.
+- Tema întunecată automată (`prefers-color-scheme`), stil de tipărire pentru rezultate, prefill al domeniului din `?d=exemplu.ro` (fără scanare automată).
+- CSP: `script-src` pe hash SHA-256, fără `'unsafe-inline'` pentru scripturi.
 - Câmpul de domeniu validează acum intrarea: text gol, „localhost”, adrese IP, nume fără punct sau cu caractere nepermise primesc un mesaj clar în `#formError`.
 - Adăugat Content-Security-Policy (meta): fără surse externe de script/stil/imagini; `connect-src https:` este necesar pentru că aplicația interoghează și domeniul introdus de utilizator.
 - Conținutul principal este încadrat în `<main>`; axe-core: 0 violări la 1280 și 360 px.
