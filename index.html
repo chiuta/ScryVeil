@@ -2,7 +2,9 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-mSu0mJ8ezB/jJvWqZnZy4ypmhs1AAZJWCeNp9bwVP9I='; style-src 'unsafe-inline'; img-src data:; connect-src https:; base-uri 'none'; form-action 'none'">
+<meta name="application-version" content="1.0.4">
+<meta name="last-updated" content="2026-10-12">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-XeRkVYEJKAUQq7GueT3monkdXwRfTqVHL3aoXMlm2bk='; style-src 'unsafe-inline'; img-src data:; connect-src https:; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ScryVeil — diagnostic de securitate pentru orice site</title>
 <style>
@@ -171,7 +173,7 @@
 
 <div class="wrap">
   <header class="masthead">
-    <div class="eyebrow">diagnostic de site // v1.0.3 // rulează în browser, fără server propriu · necesită internet</div>
+    <div class="eyebrow">diagnostic de site // <span id="app-version">v 1.0.4 · 2026-10-12</span> // rulează în browser, fără server propriu · necesită internet</div>
     <h1 class="brand">ScryVeil</h1>
     <p class="tagline">ridică vălul tehnic din jurul oricărui domeniu — ce se vede direct din browser, și ce trimitem mai departe la unealta potrivită</p>
     <form id="scanForm" class="scan-form">
@@ -683,7 +685,7 @@
     return fetch('https://safebrowsing.googleapis.com/v4/threatMatches:find?key=' + encodeURIComponent(key), {
       method: 'POST', signal: t.signal, headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
-        client: { clientId: 'scryveil', clientVersion: '1.0.0' },
+        client: { clientId: 'scryveil', clientVersion: '1.0.4' },
         threatInfo: {
           threatTypes: ['MALWARE', 'SOCIAL_ENGINEERING', 'UNWANTED_SOFTWARE', 'POTENTIALLY_HARMFUL_APPLICATION'],
           platformTypes: ['ANY_PLATFORM'], threatEntryTypes: ['URL'],
