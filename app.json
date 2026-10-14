@@ -4,7 +4,7 @@
   "name": "ScryVeil — diagnostic de securitate pentru orice site",
   "version": "1.1.0",
   "updated": "2026-10-14",
-  "description": "",
+  "description": "Diagnostic de securitate pentru orice site, rulat direct din browser: DNS, RDAP, certificat, headere, IP și reputație.",
   "egress": [
     {
       "host": "cloudflare-dns.com",
@@ -54,8 +54,8 @@
     "serviceWorker"
   ],
   "storageKeys": [],
-  "sizeBytes": 133833,
-  "sha256": "9a79d97f446960762dacc4b5f23f0137e6a8733467ad53889df0f961f77a16b9",
+  "sizeBytes": 134110,
+  "sha256": "451dc7b78c18e5d9c582996220627b1cefa65354da7de10dbc8286a6f0d7c182",
   "csp": {
     "present": true,
     "directives": {
