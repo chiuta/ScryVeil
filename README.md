@@ -70,7 +70,7 @@ Descarcă `index.html` și deschide-l în browser. Interfața se încarcă făr�
 
 ## Licență
 
-Licența nu este încă declarată explicit în acest repository; vezi nota din aplicație. Aplicația nu conține o declarație de licență.
+CC0 1.0 Universal (domeniu public) pentru codul și structura aplicației — vezi fișierul `LICENSE`. Eventualele biblioteci terțe incluse în fișier își păstrează licențele proprii.
 
 ## Autor
 
