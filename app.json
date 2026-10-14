@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "slug": "scryveil",
+  "name": "ScryVeil — diagnostic de securitate pentru orice site",
+  "version": "1.1.0",
+  "updated": "2026-10-14",
+  "description": "",
+  "egress": [
+    {
+      "host": "cloudflare-dns.com",
+      "via": [
+        "fetch"
+      ]
+    },
+    {
+      "host": "crt.sh",
+      "via": [
+        "fetch"
+      ]
+    },
+    {
+      "host": "dns.google",
+      "via": [
+        "fetch"
+      ]
+    },
+    {
+      "host": "https:(orice gazdă)",
+      "via": [
+        "csp:connect-src"
+      ]
+    },
+    {
+      "host": "ipapi.co",
+      "via": [
+        "fetch"
+      ]
+    },
+    {
+      "host": "rdap.org",
+      "via": [
+        "fetch"
+      ]
+    },
+    {
+      "host": "safebrowsing.googleapis.com",
+      "via": [
+        "fetch"
+      ]
+    }
+  ],
+  "permissions": [
+    "clipboard",
+    "serviceWorker"
+  ],
+  "storageKeys": [],
+  "sizeBytes": 133833,
+  "sha256": "9a79d97f446960762dacc4b5f23f0137e6a8733467ad53889df0f961f77a16b9",
+  "csp": {
+    "present": true,
+    "directives": {
+      "default-src": "'none'",
+      "script-src": "sha256×3",
+      "style-src": "'unsafe-inline'",
+      "img-src": "'self' data:",
+      "connect-src": "https:",
+      "base-uri": "'none'",
+      "form-action": "'none'",
+      "manifest-src": "'self'",
+      "worker-src": "'self'"
+    },
+    "scriptInline": "hash",
+    "connect": "https:"
+  },
+  "features": {
+    "export": true,
+    "import": true,
+    "i18n": [],
+    "pwa": {
+      "manifest": true,
+      "serviceWorker": true
+    },
+    "modules": [
+      "core",
+      "label",
+      "bundle"
+    ]
+  },
+  "kit": {
+    "version": "1.0.0",
+    "modules": [
+      "core",
+      "label",
+      "bundle"
+    ]
+  },
+  "selfSerializing": false
+}

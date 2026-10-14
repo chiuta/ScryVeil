@@ -1,6 +1,6 @@
 # ScryVeil
 
-**Versiune:** 1.0.4 · **Ultima actualizare:** 12 octombrie 2026
+**Versiune:** 1.1.0 · **Ultima actualizare:** 14 octombrie 2026
 
 Diagnostic de securitate pentru orice site, rulat direct din browser: DNS, RDAP, certificat, headere, IP și reputație.
 
@@ -55,6 +55,8 @@ Verificările folosesc doar surse publice și cereri obișnuite din browser, dar
 Descarcă `index.html` și deschide-l în browser. Interfața se încarcă fără internet, dar scanările necesită internet.
 
 ## Istoric / Changelog
+
+- 1.1.0 — 2026-10-14: Copie de rezervă și etichetare date (fff-kit).
 
 - 1.0.4 — 2026-10-12: versiunea și data ultimei actualizări sunt afișate în aplicație
 - Eroarea de validare a domeniului este acum vizibilă și accesibilă: câmpul primește focus și `aria-invalid`, chenar roșu, mesajul este legat prin `aria-describedby` și se șterge la următoarea tastare; text cu spații sau caractere speciale primește mesajul despre caractere nepermise (nu mai apare forma codificată `a%20b`).
