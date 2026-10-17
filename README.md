@@ -66,7 +66,7 @@ Descarcă `index.html` și deschide-l în browser. Interfața se încarcă făr�
 - Câmpul de domeniu validează acum intrarea: text gol, „localhost”, adrese IP, nume fără punct sau cu caractere nepermise primesc un mesaj clar în `#formError`.
 - Adăugat Content-Security-Policy (meta): fără surse externe de script/stil/imagini; `connect-src https:` este necesar pentru că aplicația interoghează și domeniul introdus de utilizator.
 - Conținutul principal este încadrat în `<main>`; axe-core: 0 violări la 1280 și 360 px.
-- Nerezolvat (limitare declarată): aplicația funcționează doar online; licența rămâne nedeclarată (decizia autorului).
+- Nerezolvat (limitare declarată): aplicația funcționează doar online.
 
 ## Licență
 
