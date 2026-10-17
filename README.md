@@ -70,7 +70,7 @@ Descarcă `index.html` și deschide-l în browser. Interfața se încarcă făr�
 
 ## Licență
 
-CC0 1.0 Universal (domeniu public) pentru codul și structura aplicației — vezi fișierul `LICENSE`. Eventualele biblioteci terțe incluse în fișier își păstrează licențele proprii.
+MIT pentru codul și structura aplicației — vezi fișierul `LICENSE`. Eventualele biblioteci terțe incluse în fișier își păstrează licențele proprii.
 
 ## Autor
 
@@ -78,6 +78,6 @@ Alexio — Alexandru-Ionuț Chiuță, contact: alexio@trom.tf.
 
 ## English summary
 
-ScryVeil is a single-file browser-based site security checker: DNS records, RDAP registration data, certificate transparency, HTTPS/security headers (when readable), IP/hosting info and optional Google Safe Browsing lookups, plus links to external scanners. Requests go straight from your browser to public DNS (Google/Cloudflare), rdap.org, crt.sh, ipapi.co, the scanned domain and optionally Safe Browsing; nothing is stored. License not yet declared.
+ScryVeil is a single-file browser-based site security checker: DNS records, RDAP registration data, certificate transparency, HTTPS/security headers (when readable), IP/hosting info and optional Google Safe Browsing lookups, plus links to external scanners. Requests go straight from your browser to public DNS (Google/Cloudflare), rdap.org, crt.sh, ipapi.co, the scanned domain and optionally Safe Browsing; nothing is stored. License: MIT (see LICENSE).
 
 Audit: 2026-10-10 — verificat codul (gazdele contactate corespund secțiunii de mai sus; datele din răspunsuri sunt escapate sau inserate prin textContent), accesibilitatea (axe) și funcționarea; adăugat avertisment de utilizare.
