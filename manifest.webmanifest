@@ -1,6 +1,7 @@
 {
   "name": "ScryVeil",
   "short_name": "ScryVeil",
+  "description": "Diagnostic de securitate pentru orice site, rulat direct din browser: DNS, RDAP, certificat, headere, IP și reputație.",
   "id": "./",
   "start_url": "./",
   "scope": "./",

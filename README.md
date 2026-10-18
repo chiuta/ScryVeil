@@ -1,6 +1,6 @@
 # ScryVeil
 
-**Versiune:** 1.1.0 · **Ultima actualizare:** 14 octombrie 2026
+**Versiune:** 1.2.0 · **Ultima actualizare:** 18 octombrie 2026
 
 Diagnostic de securitate pentru orice site, rulat direct din browser: DNS, RDAP, certificat, headere, IP și reputație.
 
@@ -56,6 +56,7 @@ Descarcă `index.html` și deschide-l în browser. Interfața se încarcă făr�
 
 ## Istoric / Changelog
 
+- 1.2.0 — 2026-10-18: `#d=<domeniu>` precompletează câmpul (ca `?d=`, dar fragmentul nu ajunge la server); nimic nu se scanează automat. Folosit de linkul din SEOptimum.
 - 1.1.0 — 2026-10-14: Copie de rezervă și etichetare date (fff-kit).
 
 - 1.0.4 — 2026-10-12: versiunea și data ultimei actualizări sunt afișate în aplicație
