@@ -1,79 +1,81 @@
 # ScryVeil
 
-**Versiune:** 1.2.0 · **Ultima actualizare:** 18 octombrie 2026
+**English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-Diagnostic de securitate pentru orice site, rulat direct din browser: DNS, RDAP, certificat, headere, IP și reputație.
+**Version:** 1.2.0 · **Last updated:** 2026-10-18
 
-**Live:** https://chiuta.github.io/ScryVeil/
+Security diagnostics for any website, run directly from the browser: DNS, RDAP, certificate, headers, IP and reputation.
 
-![Captura de ecran](screenshot.png)
+**Live app:** https://chiuta.github.io/ScryVeil/
 
-## Ce este
+![Screenshot](screenshot.png)
 
-ScryVeil este o aplicație single-file (`index.html`) care „ridică vălul tehnic” din jurul unui domeniu: introduci un domeniu, iar pagina rulează din browser verificările posibile fără server propriu. Ce nu poate fi citit dintr-o pagină statică (headerele altui domeniu, baze de reputație la nivel de server) este marcat „blocat”, cu explicația tehnică și linkuri către unelte externe potrivite, cu domeniul completat automat.
+## What it is
 
-## Funcții
+ScryVeil is a single-file application (`index.html`) that "lifts the technical veil" around a domain: you enter a domain, and the page runs from your browser every check that is possible without a server of its own. Whatever cannot be read from a static page (another domain's headers, server-side reputation databases) is marked "blocked", with the technical explanation and links to suitable external tools, with the domain filled in automatically.
 
-Șase panouri:
+## Features
 
-- **DNS & domeniu** — înregistrări A, AAAA, MX, TXT, NS, CNAME, SOA, CAA și semnal DNSSEC.
-- **Înregistrare (RDAP)** — registrar, dată înregistrare/expirare, nameservere.
-- **SSL & certificat** — răspuns HTTPS și Certificate Transparency (crt.sh).
-- **Headere de securitate** — CSP, HSTS, X-Frame-Options ș.a., doar dacă domeniul permite citirea din alt origin.
-- **IP & găzduire** — adresă IP, organizație/ASN, locație aproximativă.
-- **Reputație & blacklist** — verificare Google Safe Browsing dacă introduci opțional o cheie API proprie.
+Six panels:
 
-Plus raport text local (copiere/descărcare) și „Trimiteri externe” (se deschid în filă nouă, cu domeniul completat): Sucuri SiteCheck, VirusTotal, Google Transparency, Qualys SSL Labs, securityheaders.com, Mozilla HTTP Observatory, Web-Check. Un indicator animat arată starea scanării. Interfața este în română.
+- **DNS & domain** — A, AAAA, MX, TXT, NS, CNAME, SOA, CAA records and a DNSSEC signal.
+- **Registration (RDAP)** — registrar, registration/expiry date, nameservers.
+- **SSL & certificate** — HTTPS response and Certificate Transparency (crt.sh).
+- **Security headers** — CSP, HSTS, X-Frame-Options, etc., only if the domain allows cross-origin reading.
+- **IP & hosting** — IP address, organization/ASN, approximate location.
+- **Reputation & blacklist** — Google Safe Browsing check if you optionally enter your own API key.
 
-## Manual de utilizare
+Plus a local text report (copy/download) and "External submissions" (opened in a new tab, with the domain filled in): Sucuri SiteCheck, VirusTotal, Google Transparency, Qualys SSL Labs, securityheaders.com, Mozilla HTTP Observatory, Web-Check. An animated indicator shows the scan status. The interface is in Romanian.
 
-1. Scrie domeniul în câmpul „exemplu.ro” (fără a fi nevoie de alte setări).
-2. Apasă „Scanează”. Rezumatul de sub antet arată starea generală, iar fiecare panou primește o stare (ok / avertisment / problemă / blocat).
-3. Citește fiecare panou; unde apare „blocat”, folosește linkul spre unealta externă din „Trimiteri externe”.
-4. Opțional: pentru panoul de reputație, lipește o cheie API Google Safe Browsing în câmpul dedicat; cheia rămâne doar în memoria filei și nu este salvată.
-5. Pentru alt domeniu, schimbă textul și apasă din nou „Scanează”.
+## User guide
 
-## Confidențialitate și rețea
+1. Type the domain in the "exemplu.ro" field (no other settings needed).
+2. Press "Scanează" (Scan). The summary under the header shows the overall status, and each panel gets a status (ok / warning / problem / blocked).
+3. Read each panel; where "blocked" appears, use the link to the external tool in "External submissions".
+4. Optional: for the reputation panel, paste a Google Safe Browsing API key into the dedicated field; the key stays only in the tab's memory and is not saved.
+5. For another domain, change the text and press "Scanează" again.
 
-Aplicația **nu este offline**: verificările cer conexiune și contactează terți direct din browserul tău. Pagina însăși declară că nu trimite date către un server propriu și afișează, sub câmpul de scanare, ce date pleacă și către cine (nimic nu se trimite până nu apeși „Scanează”). Gazde contactate, la apăsarea „Scanează”:
+## Privacy and network
 
-- `dns.google` și `cloudflare-dns.com` (interogări DNS-over-HTTPS cu domeniul introdus);
-- `rdap.org` (date de înregistrare);
+The application **is not offline**: the checks need a connection and contact third parties directly from your browser. The page itself states that it sends no data to a server of its own and shows, under the scan field, what data leaves and to whom (nothing is sent until you press "Scanează"). Hosts contacted when you press "Scanează":
+
+- `dns.google` and `cloudflare-dns.com` (DNS-over-HTTPS queries with the entered domain);
+- `rdap.org` (registration data);
 - `crt.sh` (certificate transparency);
-- domeniul verificat însuși, prin HTTPS (verificare de accesibilitate și, unde browserul permite, headere);
-- `ipapi.co` (organizație/locație pentru IP-ul rezolvat);
-- `safebrowsing.googleapis.com`, doar dacă introduci o cheie API.
+- the checked domain itself, over HTTPS (reachability check and, where the browser allows, headers);
+- `ipapi.co` (organization/location for the resolved IP);
+- `safebrowsing.googleapis.com`, only if you enter an API key.
 
-Acești terți primesc domeniul introdus și adresa ta IP. Linkurile din „Trimiteri externe” se deschid doar la click. Nu am găsit în cod `localStorage`, `IndexedDB` sau cookie-uri; cheia Safe Browsing nu este persistată.
+These third parties receive the entered domain and your IP address. The links under "External submissions" open only on click. I did not find `localStorage`, `IndexedDB` or cookies in the code; the Safe Browsing key is not persisted.
 
-## Limitări și utilizare responsabilă
+## Limitations and responsible use
 
-Verificările folosesc doar surse publice și cereri obișnuite din browser, dar rezultatele sunt informative și nu constituie un audit de securitate complet; „blocat” înseamnă că browserul (CORS) nu permite citirea, nu că problema nu există. Folosește instrumentul doar pentru domenii proprii sau pentru care ai acordul titularului.
+The checks use only public sources and ordinary browser requests, but the results are informational and do not constitute a full security audit; "blocked" means the browser (CORS) does not allow reading, not that the problem does not exist. Use the tool only for your own domains or domains for which you have the owner's consent.
 
-## Rulare locală / offline
+## Running locally / offline
 
-Descarcă `index.html` și deschide-l în browser. Interfața se încarcă fără internet, dar scanările necesită internet.
+Download `index.html` and open it in a browser. The interface loads without internet, but scans require internet.
 
-## Istoric / Changelog
+## History / Changelog
 
-- 1.2.0 — 2026-10-18: `#d=<domeniu>` precompletează câmpul (ca `?d=`, dar fragmentul nu ajunge la server); nimic nu se scanează automat. Folosit de linkul din SEOptimum.
-- 1.1.0 — 2026-10-14: Copie de rezervă și etichetare date (fff-kit).
+- 1.2.0 — 2026-10-18: `#d=<domain>` pre-fills the field (like `?d=`, but the fragment never reaches the server); nothing is scanned automatically. Used by the link from SEOptimum.
+- 1.1.0 — 2026-10-14: Backup and data labelling (fff-kit).
 
-- 1.0.4 — 2026-10-12: versiunea și data ultimei actualizări sunt afișate în aplicație
-- Eroarea de validare a domeniului este acum vizibilă și accesibilă: câmpul primește focus și `aria-invalid`, chenar roșu, mesajul este legat prin `aria-describedby` și se șterge la următoarea tastare; text cu spații sau caractere speciale primește mesajul despre caractere nepermise (nu mai apare forma codificată `a%20b`).
-- După fiecare scanare apar „Copiază raportul” și „Descarcă raport .txt” (raport text generat local din panouri); fără conexiune, „Scanează” afișează un mesaj clar în loc să pornească cereri care ar eșua.
-- Tema întunecată automată (`prefers-color-scheme`), stil de tipărire pentru rezultate, prefill al domeniului din `?d=exemplu.ro` (fără scanare automată).
-- CSP: `script-src` pe hash SHA-256, fără `'unsafe-inline'` pentru scripturi.
-- Câmpul de domeniu validează acum intrarea: text gol, „localhost”, adrese IP, nume fără punct sau cu caractere nepermise primesc un mesaj clar în `#formError`.
-- Adăugat Content-Security-Policy (meta): fără surse externe de script/stil/imagini; `connect-src https:` este necesar pentru că aplicația interoghează și domeniul introdus de utilizator.
-- Conținutul principal este încadrat în `<main>`; axe-core: 0 violări la 1280 și 360 px.
-- Nerezolvat (limitare declarată): aplicația funcționează doar online.
+- 1.0.4 — 2026-10-12: the version and the last-updated date are shown in the app
+- The domain validation error is now visible and accessible: the field receives focus and `aria-invalid`, a red border, the message is linked through `aria-describedby` and is cleared on the next keystroke; text with spaces or special characters gets the message about disallowed characters (the encoded form `a%20b` no longer appears).
+- After each scan, "Copy report" and "Download .txt report" appear (a text report generated locally from the panels); with no connection, "Scan" shows a clear message instead of starting requests that would fail.
+- Automatic dark theme (`prefers-color-scheme`), print style for results, domain prefill from `?d=exemplu.ro` (no automatic scan).
+- CSP: `script-src` on a SHA-256 hash, without `'unsafe-inline'` for scripts.
+- The domain field now validates input: empty text, "localhost", IP addresses, names without a dot or with disallowed characters get a clear message in `#formError`.
+- Added a Content-Security-Policy (meta): no external script/style/image sources; `connect-src https:` is needed because the application also queries the domain entered by the user.
+- The main content is wrapped in `<main>`; axe-core: 0 violations at 1280 and 360 px.
+- Unresolved (declared limitation): the application works only online.
 
-## Licență
+## License
 
-MIT pentru codul și structura aplicației — vezi fișierul `LICENSE`. Eventualele biblioteci terțe incluse în fișier își păstrează licențele proprii.
+MIT for the application's code and structure — see the `LICENSE` file. Any third-party libraries included in the file keep their own licenses.
 
-## Autor
+## Author
 
 Alexio — Alexandru-Ionuț Chiuță, contact: alexio@trom.tf.
 
@@ -81,4 +83,4 @@ Alexio — Alexandru-Ionuț Chiuță, contact: alexio@trom.tf.
 
 ScryVeil is a single-file browser-based site security checker: DNS records, RDAP registration data, certificate transparency, HTTPS/security headers (when readable), IP/hosting info and optional Google Safe Browsing lookups, plus links to external scanners. Requests go straight from your browser to public DNS (Google/Cloudflare), rdap.org, crt.sh, ipapi.co, the scanned domain and optionally Safe Browsing; nothing is stored. License: MIT (see LICENSE).
 
-Audit: 2026-10-10 — verificat codul (gazdele contactate corespund secțiunii de mai sus; datele din răspunsuri sunt escapate sau inserate prin textContent), accesibilitatea (axe) și funcționarea; adăugat avertisment de utilizare.
+Audit: 2026-10-10 — code verified (the hosts contacted match the section above; data from responses is escaped or inserted via textContent), accessibility (axe) and functionality checked; a usage warning was added.
