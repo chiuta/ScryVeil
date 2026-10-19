@@ -81,8 +81,7 @@ MIT per il codice e la struttura dell'applicazione — vedi il file `LICENSE`. L
 
 Alexio — Alexandru-Ionuț Chiuță, contatto: alexio@trom.tf.
 
-## Riepilogo in inglese
-
+## Riepilogo
 ScryVeil è un verificatore di sicurezza dei siti a file singolo, eseguito nel browser: record DNS, dati di registrazione RDAP, certificate transparency, header HTTPS/di sicurezza (quando leggibili), informazioni su IP/hosting e consultazioni Google Safe Browsing facoltative, più link a scanner esterni. Le richieste partono direttamente dal tuo browser verso i DNS pubblici (Google/Cloudflare), rdap.org, crt.sh, ipapi.co, il dominio scansionato e, facoltativamente, Safe Browsing; nulla viene memorizzato. Licenza: MIT (vedi LICENSE).
 
 Audit: 2026-10-10 — codice verificato (gli host contattati corrispondono alla sezione precedente; i dati delle risposte sono sottoposti a escape o inseriti tramite textContent), accessibilità (axe) e funzionamento controllati; aggiunto un avviso d'uso.

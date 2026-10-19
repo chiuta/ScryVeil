@@ -81,8 +81,7 @@ MIT az alkalmazás kódjára és szerkezetére — lásd a `LICENSE` fájlt. A f
 
 Alexio — Alexandru-Ionuț Chiuță, kapcsolat: alexio@trom.tf.
 
-## Angol nyelvű összefoglaló
-
+## Összefoglaló
 A ScryVeil egyfájlos, böngészőben futó weboldal-biztonsági ellenőrző: DNS-rekordok, RDAP-regisztrációs adatok, tanúsítvány-átláthatóság, HTTPS-/biztonsági fejlécek (ha olvashatók), IP-/tárhelyinformációk és opcionális Google Safe Browsing-lekérdezések, valamint hivatkozások külső vizsgálókhoz. A kérések közvetlenül a böngésződből indulnak a nyilvános DNS-ek (Google/Cloudflare), az rdap.org, a crt.sh, az ipapi.co, a vizsgált domain és opcionálisan a Safe Browsing felé; semmi nem kerül tárolásra. Licenc: MIT (lásd LICENSE).
 
 Audit: 2026-10-10 — a kód ellenőrizve (a megkeresett gazdagépek egyeznek a fenti szakasszal; a válaszok adatai escape-eltek vagy textContent útján kerülnek beillesztésre), a hozzáférhetőség (axe) és a működés ellenőrizve; használati figyelmeztetés hozzáadva.

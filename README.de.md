@@ -81,8 +81,7 @@ MIT für Code und Struktur der Anwendung — siehe Datei `LICENSE`. Eventuell in
 
 Alexio — Alexandru-Ionuț Chiuță, Kontakt: alexio@trom.tf.
 
-## Englische Zusammenfassung
-
+## Zusammenfassung
 ScryVeil ist ein browserbasierter Website-Sicherheitscheck in einer einzigen Datei: DNS-Einträge, RDAP-Registrierungsdaten, Certificate Transparency, HTTPS-/Sicherheits-Header (sofern lesbar), IP-/Hosting-Informationen und optionale Google-Safe-Browsing-Abfragen, dazu Links zu externen Scannern. Die Anfragen gehen direkt von deinem Browser an öffentliche DNS-Dienste (Google/Cloudflare), rdap.org, crt.sh, ipapi.co, die gescannte Domain und optional Safe Browsing; nichts wird gespeichert. Lizenz: MIT (siehe LICENSE).
 
 Audit: 2026-10-10 — Code geprüft (die kontaktierten Hosts entsprechen dem obigen Abschnitt; Daten aus Antworten werden escaped oder über textContent eingefügt), Barrierefreiheit (axe) und Funktion kontrolliert; Nutzungshinweis hinzugefügt.
