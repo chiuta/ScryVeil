@@ -10,7 +10,7 @@ Diagnostic de securitate pentru orice site, rulat direct din browser: DNS, RDAP,
 
 **Live:** https://chiuta.github.io/ScryVeil/
 
-![Captura de ecran](screenshot.png)
+![Captura de ecran](screenshot.ro.png)
 
 ## Ce este
 

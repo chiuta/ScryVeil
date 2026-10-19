@@ -10,7 +10,7 @@ Diagnostic de sécurité pour n'importe quel site, exécuté directement depuis 
 
 **Application en ligne :** https://chiuta.github.io/ScryVeil/
 
-![Capture d'écran](screenshot.png)
+![Capture d'écran](screenshot.fr.png)
 
 ## Présentation
 

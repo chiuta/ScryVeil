@@ -10,7 +10,7 @@ Security diagnostics for any website, run directly from the browser: DNS, RDAP, 
 
 **Live app:** https://chiuta.github.io/ScryVeil/
 
-![Screenshot](screenshot.png)
+![Screenshot](screenshot.en.png)
 
 ## What it is
 

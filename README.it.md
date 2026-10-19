@@ -10,7 +10,7 @@ Diagnostica di sicurezza per qualsiasi sito, eseguita direttamente dal browser: 
 
 **App online:** https://chiuta.github.io/ScryVeil/
 
-![Schermata](screenshot.png)
+![Schermata](screenshot.it.png)
 
 ## Che cos'è
 

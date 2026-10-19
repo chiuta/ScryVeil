@@ -10,7 +10,7 @@ Biztonsági diagnosztika bármely weboldalhoz, közvetlenül a böngészőből f
 
 **Online alkalmazás:** https://chiuta.github.io/ScryVeil/
 
-![Képernyőkép](screenshot.png)
+![Képernyőkép](screenshot.hu.png)
 
 ## Mi ez
 
