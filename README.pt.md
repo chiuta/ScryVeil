@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · **Português** · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versão:** 1.3.2 · **Última atualização:** 2026-10-22
+**Versão:** 1.3.3 · **Última atualização:** 2026-10-22
 
 Idiomas da interface: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -59,6 +59,10 @@ As verificações usam apenas fontes públicas e pedidos habituais do navegador,
 Transfira `index.html` e abra-o num navegador. A interface carrega sem internet, mas as análises exigem internet.
 
 ## Histórico / Changelog
+
+### 1.3.3 — 2026-10-22
+
+fff-kit 1.1.4: alvos de toque e tamanho mínimo do texto.
 
 ### 1.3.2 — 2026-10-22
 - fff-kit 1.1.2: PBKDF2 com 600.000 iterações, proteção anti-clickjacking
