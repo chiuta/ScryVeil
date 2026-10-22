@@ -2,7 +2,7 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 1.3.1 · **Last updated:** 2026-10-22
+**Version:** 1.3.2 · **Last updated:** 2026-10-22
 
 Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -59,6 +59,9 @@ The checks use only public sources and ordinary browser requests, but the result
 Download `index.html` and open it in a browser. The interface loads without internet, but scans require internet.
 
 ## History / Changelog
+
+### 1.3.2 — 2026-10-22
+- fff-kit 1.1.2: PBKDF2 600,000 iterations, anti-clickjacking protection
 
 ### 1.3.1 — 2026-10-22
 - The exported report now starts with a line naming every test that was not performed and why (blocked by CORS, key required, unavailable), or states that all tests ran.

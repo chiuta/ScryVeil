@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · **Italiano** · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versione:** 1.3.1 · **Ultimo aggiornamento:** 2026-10-22
+**Versione:** 1.3.2 · **Ultimo aggiornamento:** 2026-10-22
 
 Lingue dell'interfaccia: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -59,6 +59,9 @@ Le verifiche usano solo fonti pubbliche e richieste ordinarie del browser, ma i 
 Scarica `index.html` e aprilo in un browser. L'interfaccia si carica senza internet, ma le scansioni richiedono internet.
 
 ## Cronologia / Changelog
+
+### 1.3.2 — 2026-10-22
+- fff-kit 1.1.2: PBKDF2 con 600.000 iterazioni, protezione anti-clickjacking
 
 ### 1.3.1 — 2026-10-22
 - Il report esportato inizia ora con una riga che indica ogni test non eseguito e il motivo (bloccato da CORS, chiave richiesta, non disponibile) oppure precisa che tutti i test sono stati eseguiti.

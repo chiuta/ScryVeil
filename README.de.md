@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · **Deutsch** · [Magyar](README.hu.md)
 
-**Version:** 1.3.1 · **Zuletzt aktualisiert:** 2026-10-22
+**Version:** 1.3.2 · **Zuletzt aktualisiert:** 2026-10-22
 
 Oberflächensprachen: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -59,6 +59,9 @@ Die Prüfungen verwenden nur öffentliche Quellen und gewöhnliche Browser-Anfra
 Lade `index.html` herunter und öffne sie in einem Browser. Die Oberfläche lädt ohne Internet, aber Scans benötigen Internet.
 
 ## Verlauf / Changelog
+
+### 1.3.2 — 2026-10-22
+- fff-kit 1.1.2: PBKDF2 mit 600.000 Iterationen, Schutz vor Clickjacking
 
 ### 1.3.1 — 2026-10-22
 - Der exportierte Bericht beginnt jetzt mit einer Zeile, die jeden nicht durchgeführten Test samt Grund nennt (durch CORS blockiert, Schlüssel nötig, nicht verfügbar) oder angibt, dass alle Tests liefen.

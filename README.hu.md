@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · **Magyar**
 
-**Verzió:** 1.3.1 · **Utolsó frissítés:** 2026-10-22
+**Verzió:** 1.3.2 · **Utolsó frissítés:** 2026-10-22
 
 A felület nyelvei: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -59,6 +59,9 @@ Az ellenőrzések csak nyilvános forrásokat és szokásos böngészőkérések
 Töltsd le az `index.html` fájlt, és nyisd meg böngészőben. A felület internet nélkül is betöltődik, de a vizsgálatokhoz internet kell.
 
 ## Előzmények / Changelog
+
+### 1.3.2 — 2026-10-22
+- fff-kit 1.1.2: PBKDF2 600 000 iterációval, clickjacking elleni védelem
 
 ### 1.3.1 — 2026-10-22
 - A exportált jelentés mostantól egy sorral kezdődik, amely megnevezi minden el nem végzett tesztet és az okát (CORS blokkolta, kulcs szükséges, nem elérhető), vagy jelzi, hogy minden teszt lefutott.
