@@ -2,7 +2,7 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 1.3.0 · **Last updated:** 2026-10-19
+**Version:** 1.3.1 · **Last updated:** 2026-10-22
 
 Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -59,6 +59,11 @@ The checks use only public sources and ordinary browser requests, but the result
 Download `index.html` and open it in a browser. The interface loads without internet, but scans require internet.
 
 ## History / Changelog
+
+### 1.3.1 — 2026-10-22
+- The exported report now starts with a line naming every test that was not performed and why (blocked by CORS, key required, unavailable), or states that all tests ran.
+- Transparency label fixed: the language selector is declared in the page, so the label now lists the 8 interface languages instead of an empty list.
+- Mobile: no text below 12 px and touch targets of at least 24 px (WCAG 2.5.8).
 
 - 1.2.0 — 2026-10-18: `#d=<domain>` pre-fills the field (like `?d=`, but the fragment never reaches the server); nothing is scanned automatically. Used by the link from SEOptimum.
 - 1.1.0 — 2026-10-14: Backup and data labelling (fff-kit).

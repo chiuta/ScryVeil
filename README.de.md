@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · **Deutsch** · [Magyar](README.hu.md)
 
-**Version:** 1.3.0 · **Zuletzt aktualisiert:** 2026-10-19
+**Version:** 1.3.1 · **Zuletzt aktualisiert:** 2026-10-22
 
 Oberflächensprachen: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -59,6 +59,11 @@ Die Prüfungen verwenden nur öffentliche Quellen und gewöhnliche Browser-Anfra
 Lade `index.html` herunter und öffne sie in einem Browser. Die Oberfläche lädt ohne Internet, aber Scans benötigen Internet.
 
 ## Verlauf / Changelog
+
+### 1.3.1 — 2026-10-22
+- Der exportierte Bericht beginnt jetzt mit einer Zeile, die jeden nicht durchgeführten Test samt Grund nennt (durch CORS blockiert, Schlüssel nötig, nicht verfügbar) oder angibt, dass alle Tests liefen.
+- Transparenz-Label korrigiert: Der Sprachwähler ist in der Seite deklariert, daher listet das Label jetzt die 8 Oberflächensprachen statt einer leeren Liste.
+- Mobil: kein Text unter 12 px und Touch-Ziele von mindestens 24 px (WCAG 2.5.8).
 
 - 1.2.0 — 2026-10-18: `#d=<Domain>` füllt das Feld vor (wie `?d=`, aber das Fragment erreicht den Server nicht); nichts wird automatisch gescannt. Wird vom Link aus SEOptimum verwendet.
 - 1.1.0 — 2026-10-14: Datensicherung und Datenkennzeichnung (fff-kit).

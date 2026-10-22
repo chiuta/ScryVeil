@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · **Português** · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versão:** 1.3.0 · **Última atualização:** 2026-10-19
+**Versão:** 1.3.1 · **Última atualização:** 2026-10-22
 
 Idiomas da interface: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -59,6 +59,11 @@ As verificações usam apenas fontes públicas e pedidos habituais do navegador,
 Transfira `index.html` e abra-o num navegador. A interface carrega sem internet, mas as análises exigem internet.
 
 ## Histórico / Changelog
+
+### 1.3.1 — 2026-10-22
+- O relatório exportado começa agora com uma linha que nomeia cada teste não realizado e o motivo (bloqueado por CORS, requer chave, indisponível), ou indica que todos os testes foram executados.
+- Etiqueta de transparência corrigida: o seletor de idioma está declarado na página, pelo que a etiqueta lista agora os 8 idiomas da interface em vez de uma lista vazia.
+- Telemóvel: nenhum texto abaixo de 12 px e áreas táteis de pelo menos 24 px (WCAG 2.5.8).
 
 - 1.2.0 — 2026-10-18: `#d=<domínio>` preenche previamente o campo (como `?d=`, mas o fragmento não chega ao servidor); nada é analisado automaticamente. Usado pela ligação a partir do SEOptimum.
 - 1.1.0 — 2026-10-14: cópia de segurança e etiquetagem de dados (fff-kit).

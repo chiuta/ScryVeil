@@ -2,7 +2,7 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 1.3.0 · **Ultima actualizare:** 2026-10-19
+**Versiune:** 1.3.1 · **Ultima actualizare:** 2026-10-22
 
 Limbile interfeței: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -59,6 +59,11 @@ Verificările folosesc doar surse publice și cereri obișnuite din browser, dar
 Descarcă `index.html` și deschide-l în browser. Interfața se încarcă fără internet, dar scanările necesită internet.
 
 ## Istoric / Changelog
+
+### 1.3.1 — 2026-10-22
+- Raportul exportat începe acum cu o linie care numește fiecare test neefectuat și motivul (blocat de CORS, necesită cheie, indisponibil) sau precizează că toate testele au rulat.
+- Eticheta de transparență a fost corectată: selectorul de limbă este declarat în pagină, deci eticheta listează acum cele 8 limbi ale interfeței, nu o listă goală.
+- Mobil: niciun text sub 12 px și ținte tactile de cel puțin 24 px (WCAG 2.5.8).
 
 - 1.2.0 — 2026-10-18: `#d=<domeniu>` precompletează câmpul (ca `?d=`, dar fragmentul nu ajunge la server); nimic nu se scanează automat. Folosit de linkul din SEOptimum.
 - 1.1.0 — 2026-10-14: Copie de rezervă și etichetare date (fff-kit).
