@@ -2,7 +2,7 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 1.3.6 · **Last updated:** 2026-10-26
+**Version:** 2.0.0 · **Last updated:** 2026-10-26
 
 Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -28,6 +28,8 @@ Six panels:
 - **Reputation & blacklist** — Google Safe Browsing check if you optionally enter your own API key.
 
 Plus a local text report (copy/download) and "External submissions" (opened in a new tab, with the domain filled in): Sucuri SiteCheck, VirusTotal, Google Transparency, Qualys SSL Labs, securityheaders.com, Mozilla HTTP Observatory, Web-Check. An animated indicator shows the scan status. The interface is in Romanian.
+- **Security timeline (2.0.0):** every finished scan is kept locally (browser only, up to 30 per domain) and any two scans can be compared: NS, MX, A/AAAA, SPF, DMARC, DNSSEC, certificate, RDAP and headers. “Unknown” (a blocked panel) is never reported as a change.
+- **Explained score and remediation plan:** the score starts at 100, each deduction states its reason, and the plan is ordered by impact; on open, a banner warns about certificates or domains expiring within 30 days (from the last saved scan, no network). The score is indicative, not an audit.
 
 ## User guide
 

@@ -2,7 +2,7 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 1.3.6 · **Ultima actualizare:** 2026-10-26
+**Versiune:** 2.0.0 · **Ultima actualizare:** 2026-10-26
 
 Limbile interfeței: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -28,6 +28,8 @@ ScryVeil este o aplicație single-file (`index.html`) care „ridică vălul teh
 - **Reputație & blacklist** — verificare Google Safe Browsing dacă introduci opțional o cheie API proprie.
 
 Plus raport text local (copiere/descărcare) și „Trimiteri externe” (se deschid în filă nouă, cu domeniul completat): Sucuri SiteCheck, VirusTotal, Google Transparency, Qualys SSL Labs, securityheaders.com, Mozilla HTTP Observatory, Web-Check. Un indicator animat arată starea scanării. Interfața este în română.
+- **Cronologie de securitate (2.0.0):** fiecare scanare încheiată se păstrează local (doar în browser, max. 30 pe domeniu) și poți compara două scanări: ce s-a schimbat la NS, MX, A/AAAA, SPF, DMARC, DNSSEC, certificat, RDAP și headere. „Necunoscut” (panou blocat) nu e tratat ca schimbare.
+- **Scor explicat și plan de remediere:** scorul pornește de la 100, fiecare penalizare își arată motivul, iar planul de remediere e ordonat după impact; la deschidere apare un avertisment pentru certificate sau domenii care expiră în 30 de zile (din ultima scanare salvată, fără rețea). Scorul este orientativ, nu un audit.
 
 ## Manual de utilizare
 
