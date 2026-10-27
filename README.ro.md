@@ -2,7 +2,9 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 2.0.0 · **Ultima actualizare:** 2026-10-26
+**Versiune:** 2.1.0 · **Ultima actualizare:** 2026-10-27
+
+**Stare:** stabil. **Offline:** nu — verificările cer internet și contactează terți din browserul tău (vezi „Confidențialitate și rețea”); cronologia, scorul și rapoartele funcționează local pe rezultatele salvate.
 
 Limbile interfeței: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -30,6 +32,9 @@ ScryVeil este o aplicație single-file (`index.html`) care „ridică vălul teh
 Plus raport text local (copiere/descărcare) și „Trimiteri externe” (se deschid în filă nouă, cu domeniul completat): Sucuri SiteCheck, VirusTotal, Google Transparency, Qualys SSL Labs, securityheaders.com, Mozilla HTTP Observatory, Web-Check. Un indicator animat arată starea scanării. Interfața este în română.
 - **Cronologie de securitate (2.0.0):** fiecare scanare încheiată se păstrează local (doar în browser, max. 30 pe domeniu) și poți compara două scanări: ce s-a schimbat la NS, MX, A/AAAA, SPF, DMARC, DNSSEC, certificat, RDAP și headere. „Necunoscut” (panou blocat) nu e tratat ca schimbare.
 - **Scor explicat și plan de remediere:** scorul pornește de la 100, fiecare penalizare își arată motivul, iar planul de remediere e ordonat după impact; la deschidere apare un avertisment pentru certificate sau domenii care expiră în 30 de zile (din ultima scanare salvată, fără rețea). Scorul este orientativ, nu un audit.
+- **Autentificare e-mail și DNSSEC (2.1.0):** în panoul DNS, o secțiune „Autentificare e-mail și DNSSEC”: **SPF** (înregistrarea, mecanismul final `all`: `-all` / `~all` / `?all` / `+all`, și numărul mecanismelor care cer căutări DNS la primul nivel față de limita de 10; include-urile imbricate nu se urmăresc), **DMARC** (înregistrarea, politica `p=`, prezența `rua`), **DKIM** (sondează 9 selectoare uzuale — `default, google, selector1, selector2, k1, s1, s2, mail, dkim` — doar dacă domeniul are MX; un câmp permite verificarea oricărui selector cunoscut; **lipsa unei chei găsite nu dovedește că DKIM lipsește**, fiindcă selectorul real e în antetul `DKIM-Signature` al unui e-mail primit) și **DNSSEC** (semnalul AD al rezolvatorului plus înregistrarea `DS` din zona părinte; un DS fără AD e marcat drept posibilă configurare greșită). Verificări informative din DNS public, nu un test de trimitere și primire.
+- **Scor (2.1.0):** două penalizări noi, mici, doar când domeniul are MX: −5 pentru SPF permisiv (`?all` sau `+all`) și −3 pentru DMARC cu `p=none`; fiecare apare cu motiv și pas de remediere. Scorurile scanărilor salvate înainte de 2.1.0 nu se recalculează, deci o diferență de scor peste granița 2.0.0/2.1.0 poate veni din regulile noi.
+- **Export JSON (2.1.0):** „Descarcă raport .json” salvează scanarea curentă într-o formă prelucrabilă (`format: scryveil-report`): starea panourilor, DNS, autentificarea e-mailului, DNSSEC, RDAP, certificat, headere, reputație și scorul cu fiecare penalizare (puncte, motiv, remediere) și lista zonelor neevaluate. Nu include niciodată cheia API Safe Browsing. Cronologia avea deja propriul export JSON.
 
 ## Manual de utilizare
 
@@ -52,6 +57,8 @@ Aplicația **nu este offline**: verificările cer conexiune și contactează ter
 
 Acești terți primesc domeniul introdus și adresa ta IP. Linkurile din „Trimiteri externe” se deschid doar la click. Nu am găsit în cod `localStorage`, `IndexedDB` sau cookie-uri; cheia Safe Browsing nu este persistată.
 
+- 2.1.0 adaugă interogări DNS către aceleași servicii (Google/Cloudflare DoH): `_dmarc.<domeniu>` (deja din 2.0.0), `DS` pentru domeniu și, dacă are MX, `<selector>._domainkey.<domeniu>` pentru cele 9 selectoare uzuale. Conțin numele domeniului; nu apar gazde noi.
+
 ## Limitări și utilizare responsabilă
 
 Verificările folosesc doar surse publice și cereri obișnuite din browser, dar rezultatele sunt informative și nu constituie un audit de securitate complet; „blocat” înseamnă că browserul (CORS) nu permite citirea, nu că problema nu există. Folosește instrumentul doar pentru domenii proprii sau pentru care ai acordul titularului.
@@ -61,6 +68,9 @@ Verificările folosesc doar surse publice și cereri obișnuite din browser, dar
 Descarcă `index.html` și deschide-l în browser. Interfața se încarcă fără internet, dar scanările necesită internet.
 
 ## Istoric / Changelog
+
+### 2.1.0 — 2026-10-27
+- Autentificare e-mail (SPF/DKIM/DMARC) și DS în panoul DNS, două penalizări noi de scor, export raport JSON, `CHANGELOG.md`, linii Stare/Offline. Anterior: v2.0.0.
 
 ### 1.3.3 — 2026-10-22
 
