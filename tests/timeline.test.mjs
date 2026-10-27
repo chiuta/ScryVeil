@@ -1,4 +1,4 @@
-// Teste v2.0.0: cronologie locală de securitate, diff între scanări, scor explicat, plan de remediere, avertizare de expirare.
+// Teste v2.1.0: cronologie locală de securitate, diff între scanări, scor explicat, plan de remediere, avertizare de expirare.
 // [fff-portable] axe-core: FFF_AXE / AXE_PATH, apoi pachetul `axe-core`.
 import {createRequire as __fffCR} from 'node:module';
 import {readFileSync as __fffRF} from 'node:fs';
@@ -123,22 +123,22 @@ const txt = (page, sel) => page.evaluate((s) => document.querySelector(s).innerT
   await scan(page);
   const s2 = await stored(page);
   check('două înregistrări', s2.list.length === 2);
-  check('scor 84 (certificat în 10 zile −10, restul −6)', s2.list[1].score.n === 84, s2.list[1].score);
+  check('scor 81 (certificat în 10 zile −10, DMARC p=none −3, restul −6; 2.1.0)', s2.list[1].score.n === 81, s2.list[1].score);
   const df = await txt(page, '#tlDiff');
   check('diff: NS adăugat și eliminat', /ns2\.new\.example \(added\)/.test(df) && /ns2\.old\.example \(removed\)/.test(df), df);
   check('diff: A schimbat', /203\.0\.113\.77 \(added\)/.test(df) && /203\.0\.113\.10 \(removed\)/.test(df));
   check('diff: DMARC din (none) în politică', /DMARC policy: \(none\) → v=DMARC1; p=none/.test(df), df);
   check('diff: DNSSEC off → on', /DNSSEC: off → on/.test(df));
   check('diff: emitent și expirare certificat', /Certificate issuer:/.test(df) && /Certificate valid until:/.test(df));
-  check('diff: scorul 79 → 84', /Score: 79 → 84/.test(df));
+  check('diff: scorul 79 → 81', /Score: 79 → 81/.test(df));
   check('diff nu inventează schimbări (MX, SPF identice)', !/Mail servers/.test(df) && !/SPF policy/.test(df) && !/Registrar:/.test(df));
-  check('delta față de scanarea anterioară', /\+5 compared with the previous scan/.test(await txt(page, '#scoreBody')));
+  check('delta față de scanarea anterioară', /\+2 compared with the previous scan/.test(await txt(page, '#scoreBody')));
   const plan2 = await page.$$eval('#scoreBody ol li', (l) => l.map((x) => x.textContent));
   check('plan 2: certificatul primul', /Renew the certificate before/.test(plan2[0]), plan2);
   check('tabel cu 2 rânduri, cel mai nou primul', (await page.$$('#tlTable tbody tr')).length === 2 && await page.evaluate(() => document.getElementById('tlB').selectedIndex === 0 && document.getElementById('tlA').selectedIndex === 1));
   await page.selectOption('#tlA', {index: 0}); await page.selectOption('#tlB', {index: 1});
   const rev = await txt(page, '#tlDiff');
-  check('inversarea selecției inversează diff-ul', /ns2\.old\.example \(added\)/.test(rev) && /Score: 84 → 79/.test(rev), rev.slice(0, 200));
+  check('inversarea selecției inversează diff-ul', /ns2\.old\.example \(added\)/.test(rev) && /Score: 81 → 79/.test(rev), rev.slice(0, 200));
   await page.selectOption('#tlA', {index: 0}); await page.selectOption('#tlB', {index: 0});
   check('aceeași scanare ambele părți: fără diff fals', /two saved scans/i.test(await txt(page, '#tlDiff')) || !/Score:/.test(await txt(page, '#tlDiff')));
 

@@ -2,7 +2,9 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 2.0.0 · **Last updated:** 2026-10-26
+**Version:** 2.1.0 · **Last updated:** 2026-10-27
+
+**Status:** stable. **Offline:** no — the checks need internet and contact third parties from your browser (see “Privacy and network”); the timeline, score and reports work locally on the saved results.
 
 Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -30,6 +32,9 @@ Six panels:
 Plus a local text report (copy/download) and "External submissions" (opened in a new tab, with the domain filled in): Sucuri SiteCheck, VirusTotal, Google Transparency, Qualys SSL Labs, securityheaders.com, Mozilla HTTP Observatory, Web-Check. An animated indicator shows the scan status. The interface is in Romanian.
 - **Security timeline (2.0.0):** every finished scan is kept locally (browser only, up to 30 per domain) and any two scans can be compared: NS, MX, A/AAAA, SPF, DMARC, DNSSEC, certificate, RDAP and headers. “Unknown” (a blocked panel) is never reported as a change.
 - **Explained score and remediation plan:** the score starts at 100, each deduction states its reason, and the plan is ordered by impact; on open, a banner warns about certificates or domains expiring within 30 days (from the last saved scan, no network). The score is indicative, not an audit.
+- **Email authentication and DNSSEC (2.1.0):** in the DNS panel, an “Email authentication and DNSSEC” section: **SPF** (record, the closing `all` mechanism: `-all` / `~all` / `?all` / `+all`, and a count of the mechanisms that trigger DNS lookups at the top level versus the limit of 10; nested includes are not followed), **DMARC** (record, policy `p=`, presence of `rua`), **DKIM** (probes 9 common selectors — `default, google, selector1, selector2, k1, s1, s2, mail, dkim` — only when the domain has MX; a field lets you check any selector you know; **not finding a key does not prove DKIM is missing**, because the real selector is in the `DKIM-Signature` header of a received email) and **DNSSEC** (the resolver's AD flag plus the `DS` record in the parent zone; a DS without AD is flagged as a possible misconfiguration). Informative checks from public DNS, not a send-and-receive test.
+- **Score (2.1.0):** two new, small deductions, only when the domain has MX: −5 for a permissive SPF (`?all` or `+all`) and −3 for DMARC with `p=none`; each appears with its reason and remediation step. Scores of scans saved before 2.1.0 are not recalculated, so a score difference across the 2.0.0/2.1.0 boundary may come from the new rules.
+- **JSON export (2.1.0):** “Download report .json” saves the current scan in a machine-readable form (`format: scryveil-report`): panel statuses, DNS, email authentication, DNSSEC, RDAP, certificate, headers, reputation, and the score with each deduction (points, reason, remediation) and the list of areas not assessed. It never includes the Safe Browsing API key. The timeline already had its own JSON export.
 
 ## User guide
 
@@ -52,6 +57,8 @@ The application **is not offline**: the checks need a connection and contact thi
 
 These third parties receive the entered domain and your IP address. The links under "External submissions" open only on click. I did not find `localStorage`, `IndexedDB` or cookies in the code; the Safe Browsing key is not persisted.
 
+- 2.1.0 adds DNS queries to the same services (Google/Cloudflare DoH): `_dmarc.<domain>` (already in 2.0.0), `DS` for the domain and, if it has MX, `<selector>._domainkey.<domain>` for the 9 common selectors. They carry the domain name; no new hosts.
+
 ## Limitations and responsible use
 
 The checks use only public sources and ordinary browser requests, but the results are informational and do not constitute a full security audit; "blocked" means the browser (CORS) does not allow reading, not that the problem does not exist. Use the tool only for your own domains or domains for which you have the owner's consent.
@@ -61,6 +68,9 @@ The checks use only public sources and ordinary browser requests, but the result
 Download `index.html` and open it in a browser. The interface loads without internet, but scans require internet.
 
 ## History / Changelog
+
+### 2.1.0 — 2026-10-27
+- Email authentication (SPF/DKIM/DMARC) and DS in the DNS panel, two new score deductions, JSON report export, `CHANGELOG.md`, status/offline lines. Previously: v2.0.0.
 
 ### 1.3.5 — 2026-10-23
 
