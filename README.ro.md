@@ -2,7 +2,7 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 2.1.0 · **Ultima actualizare:** 2026-10-27
+**Versiune:** 2.2.0 · **Ultima actualizare:** 2026-10-27
 
 **Stare:** stabil. **Offline:** nu — verificările cer internet și contactează terți din browserul tău (vezi „Confidențialitate și rețea”); cronologia, scorul și rapoartele funcționează local pe rezultatele salvate.
 
@@ -57,7 +57,7 @@ Aplicația **nu este offline**: verificările cer conexiune și contactează ter
 
 Acești terți primesc domeniul introdus și adresa ta IP. Linkurile din „Trimiteri externe” se deschid doar la click. Nu am găsit în cod `localStorage`, `IndexedDB` sau cookie-uri; cheia Safe Browsing nu este persistată.
 
-- 2.1.0 adaugă interogări DNS către aceleași servicii (Google/Cloudflare DoH): `_dmarc.<domeniu>` (deja din 2.0.0), `DS` pentru domeniu și, dacă are MX, `<selector>._domainkey.<domeniu>` pentru cele 9 selectoare uzuale. Conțin numele domeniului; nu apar gazde noi.
+- 2.1.0 adaugă interogări DNS către aceleași servicii (Google/Cloudflare DoH): `_dmarc.<domeniu>` (deja din 2.0.0), `DS` pentru domeniu și, dacă are MX, `<selector>._domainkey.<domeniu>` pentru cele 19 selectoare uzuale (2.2.0: adăugate `k2`, `k3`, `protonmail`, `protonmail2`, `protonmail3`, `fm1`, `fm2`, `fm3`, `zoho`, `mandrill`; nume raportate de ghiduri publice, nu documentație oficială a furnizorilor și neverificate pe domenii reale). Conțin numele domeniului; nu apar gazde noi.
 
 ## Limitări și utilizare responsabilă
 

@@ -2,7 +2,7 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 2.1.0 · **Last updated:** 2026-10-27
+**Version:** 2.2.0 · **Last updated:** 2026-10-27
 
 **Status:** stable. **Offline:** no — the checks need internet and contact third parties from your browser (see “Privacy and network”); the timeline, score and reports work locally on the saved results.
 
@@ -57,7 +57,7 @@ The application **is not offline**: the checks need a connection and contact thi
 
 These third parties receive the entered domain and your IP address. The links under "External submissions" open only on click. I did not find `localStorage`, `IndexedDB` or cookies in the code; the Safe Browsing key is not persisted.
 
-- 2.1.0 adds DNS queries to the same services (Google/Cloudflare DoH): `_dmarc.<domain>` (already in 2.0.0), `DS` for the domain and, if it has MX, `<selector>._domainkey.<domain>` for the 9 common selectors. They carry the domain name; no new hosts.
+- 2.1.0 adds DNS queries to the same services (Google/Cloudflare DoH): `_dmarc.<domain>` (already in 2.0.0), `DS` for the domain and, if it has MX, `<selector>._domainkey.<domain>` for the 19 common selectors (2.2.0: `k2`, `k3`, `protonmail`, `protonmail2`, `protonmail3`, `fm1`, `fm2`, `fm3`, `zoho`, `mandrill` were added; names reported by public setup guides, not official provider documentation and not checked on real domains). They carry the domain name; no new hosts.
 
 ## Limitations and responsible use
 
