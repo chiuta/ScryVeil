@@ -2,6 +2,15 @@
 
 Format SemVer (MAJOR.MINOR.PATCH).
 
+## 2.2.0 — 2026-10-27
+
+Anterior: v2.1.0.
+
+- Mai multe selectoare DKIM uzuale: de la 9 la 19. Adăugate: `k2`, `k3` (Mailchimp), `protonmail`, `protonmail2`, `protonmail3` (Proton Mail), `fm1`, `fm2`, `fm3` (Fastmail), `zoho` (Zoho Mail), `mandrill` (Mandrill, selector vechi). Justificare: nume raportate de pagini publice de ghiduri (căutare web 2026-10-27, de ex. mailflowauthority.com pentru Fastmail, captaindns.com pentru Mailchimp/Proton/Zoho/Mandrill); NU sunt documentație oficială a furnizorilor și nu s-au verificat pe domenii reale. Selectoarele Mandrill `mte1`/`mte2` și Zoho `zmail`, văzute în aceeași sursă, nu au fost adăugate (confirmare insuficientă).
+- Consecință: pentru domeniile cu MX se trimit 19 interogări DKIM (în loc de 9) către aceleași servicii Google/Cloudflare DoH. Mesajul „nicio cheie” rămâne informativ (nu dovedește lipsa DKIM).
+- Teste: `tests/selectors.test.mjs` nou (4 verificări: toate cele 19 sondate o dată, cheie găsită pe un selector adăugat, mesajul pentru zero chei); `mailauth` 32/32 (versiunea actualizată), `timeline` 69/69.
+- Neimplementat: urmărirea include-urilor SPF și validarea semnăturilor DKIM/DNSSEC (imposibile rezonabil fără server); selectoare Amazon SES și altele cu nume aleatoare (nu se pot ghici).
+
 ## 2.1.0 — 2026-10-27
 
 Anterior: v2.0.0.
