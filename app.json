@@ -58,8 +58,8 @@
     "scryveil.lang",
     "scryveil.timeline"
   ],
-  "sizeBytes": 328329,
-  "sha256": "31107dbaf74e117c59710e5fff5e653b1219078d955d0ebcfab05a6e3c14cdaa",
+  "sizeBytes": 468763,
+  "sha256": "313b6a85f66e9010c141df81cc6f28b9cf8c3e500e1f0e93daf761d23281ee77",
   "csp": {
     "present": true,
     "directives": {
@@ -98,7 +98,11 @@
       "store",
       "dialog",
       "label",
-      "bundle"
+      "bundle",
+      "qr",
+      "p2p",
+      "sync",
+      "history"
     ]
   },
   "kit": {
@@ -108,7 +112,11 @@
       "store",
       "dialog",
       "label",
-      "bundle"
+      "bundle",
+      "qr",
+      "p2p",
+      "sync",
+      "history"
     ]
   },
   "selfSerializing": false
