@@ -2,7 +2,7 @@
   "schema": 1,
   "slug": "scryveil",
   "name": "ScryVeil — diagnostic de securitate pentru orice site",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "updated": "2026-11-11",
   "description": "Diagnostic de securitate pentru orice site, rulat direct din browser: DNS, RDAP, certificat, headere, IP și reputație.",
   "egress": [
@@ -60,8 +60,8 @@
     "scryveil.lang",
     "scryveil.timeline"
   ],
-  "sizeBytes": 574557,
-  "sha256": "f0337dd0dc96ace0f6944be21103c3e63bda7c6fe31c2ad5da17fe65a1395388",
+  "sizeBytes": 577440,
+  "sha256": "d5d79eef54dc7db02040f8ab6ba8544d0d0551cc4e65899e65607f49238a4a67",
   "csp": {
     "present": true,
     "directives": {
