@@ -2,7 +2,7 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 2.2.7 · **Last updated:** 2026-11-10
+**Version:** 2.2.8 · **Last updated:** 2026-11-13
 
 **Status:** stable. **Offline:** no — the checks need internet and contact third parties from your browser (see “Privacy and network”); the timeline, score and reports work locally on the saved results.
 
