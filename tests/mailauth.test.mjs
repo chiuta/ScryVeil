@@ -7,6 +7,7 @@ const require = createRequire(process.env.PW_ROOT || import.meta.url);
 const {chromium} = require('playwright');
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FILE = 'file://' + path.join(HERE, '..', 'index.html');
+const APP_VERSION = JSON.parse(fs.readFileSync(path.join(HERE, '..', 'app.json'), 'utf8')).version;   // versiunea aplicației, nu un minor scris în test
 let ok = 0, bad = 0;
 const check = (n, c, x) => { if (c) { ok++; console.log('  ok   ' + n); } else { bad++; console.log('  FAIL ' + n + (x !== undefined ? '  → ' + JSON.stringify(x) : '')); } };
 const NOW = new Date('2026-10-26T10:00:00Z').getTime();
@@ -86,7 +87,7 @@ const txt = (page, sel) => page.evaluate((s) => document.querySelector(s).innerT
   const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#btnSaveJson')]);
   check('nume de fișier .json', /^scryveil-example\.com\.json$/.test(dl.suggestedFilename()), dl.suggestedFilename());
   const rep = JSON.parse(fs.readFileSync(await dl.path(), 'utf8'));
-  check('format, versiune, domeniu', rep.format === 'scryveil-report' && rep.domain === 'example.com' && /^2\.2\./.test(rep.version), [rep.format, rep.domain, rep.version]);
+  check('format, versiune, domeniu', rep.format === 'scryveil-report' && rep.domain === 'example.com' && rep.version === APP_VERSION, [rep.format, rep.domain, rep.version, APP_VERSION]);
   check('scor 86 cu penalizări, motive și remediere', rep.score.value === 86 && rep.score.deductions.some((d) => d.id === 'spf_open' && d.points === -5 && d.reason && d.remediation) && rep.score.deductions.some((d) => d.id === 'dmarc_none'), rep.score);
   check('e-mail: SPF, DMARC, DKIM, DS', rep.email.spfAll === '?all' && rep.email.dmarcPolicy === 'none' && rep.email.dkimSelectorsFound.join() === 'google' && rep.dnssec.dsInParentZone === true && rep.dnssec.resolverValidated === true, rep.email);
   check('panourile și avertismentul sunt incluse', rep.panels.dns === 'ok' && /security audit/i.test(rep.disclaimer), [rep.panels, rep.disclaimer]);
